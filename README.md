@@ -27,18 +27,18 @@
 
 
 ## About The Project
-As a frequent contributor to my GitHub repository, I've often struggled with finding the perfect README template that suits my needs. After hours of scouring through various templates, I've decided to take matters into my own hands and create my very own README template. My aim is to create a comprehensive yet concise guide that outlines all the necessary information regarding my projects, including: 
+<!-- As a frequent contributor to my GitHub repository, I've often struggled with finding the perfect README template that suits my needs. After hours of scouring through various templates, I've decided to take matters into my own hands and create my very own README template. My aim is to create a comprehensive yet concise guide that outlines all the necessary information regarding my projects, including: 
 * Installation instructions
 * Usage examples
 * Contribution guidelines 
 
 This template will streamline the process of creating README files and provide value to other developers who are looking for a similar solution. I'm excited to share my template with the community and hope that it will make the process of creating README files a lot easier for others. Please give this project a :star2: star :star2: if you find it useful!
 
-Use the `BLANK_README.md` (_in progress_) to get started!
+Use the `BLANK_README.md` (_in progress_) to get started! -->
 
 ## Built With
 ### Major Frameworks / Libraries 
-_Examples of Major Frameworks and Libraries_
+<!-- _Examples of Major Frameworks and Libraries_
 
 #### Front-end frameworks and libraries
 1. React - A JavaScript library for building user interfaces.
@@ -66,10 +66,10 @@ _Examples of Major Frameworks and Libraries_
 2. Flask RESTful - A Flask extension for building RESTful APIs.
 3. FastAPI - A modern, fast (high-performance) web framework for building APIs with Python 3.7+.
 4. Jest - A JavaScript testing framework.
-5. Mocha - A JavaScript testing framework for Node.js applications.
+5. Mocha - A JavaScript testing framework for Node.js applications. -->
 
 ### APIs 
-_Examples of APIs used_
+<!-- _Examples of APIs used_
 1. Google Maps API - Provides access to Google Maps data and functionality.
 2. Twitter API - Allows developers to access Twitter data and functionality.
 3. Facebook Graph API - Enables developers to access Facebook data and functionality.
@@ -79,7 +79,7 @@ _Examples of APIs used_
 7. GitHub API - Allows developers to access GitHub data and functionality.
 8. Amazon Web Services (AWS) API - Provides access to AWS cloud services and functionality.
 9. Twilio API - Enables developers to build SMS and voice applications.
-10. Slack API - Allows developers to access Slack data and functionality.
+10. Slack API - Allows developers to access Slack data and functionality. -->
 
 ## Getting Started
 ### Prerequisites
@@ -102,7 +102,7 @@ _Examples of prerequisites_
     ```sh
     cd ticket-booking-system
     ```
-3. Install NPM packages (if applicable)
+<!-- 3. Install NPM packages (if applicable)
    ```sh
    npm install
    ```
@@ -113,14 +113,14 @@ _Examples of prerequisites_
 4. Open the project in your browser.
     ```sh
     open http://localhost:3000
-    ```
+    ``` -->
 
 ## Usage
-To use the application, follow these steps:
+<!-- To use the application, follow these steps:
 1. Open the application in a web browser.
 2. Follow the on-screen instructions to navigate through the application's features.
 3. If prompted, enter any required input values or select desired options.
-4. When finished, exit the application or close the web browser.
+4. When finished, exit the application or close the web browser. -->
 
 ## Contributing
 If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
@@ -140,7 +140,7 @@ Feel free to contact and connect!
 |<img src="https://avatars.githubusercontent.com/u/68149788?v=4" width="100"></img>|Tan Zuyi Joey|Project Manager|[![jeezusplays](https://img.shields.io/badge/GitHub-181717.svg?style=for-the-badge&logo=GitHub&logoColor=white)](https://github.com/jeezusplays)|[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2.svg?style=for-the-badge&logo=LinkedIn&logoColor=white)](https://linkedin.com/in/joey-tan-zuyi)|
 
 ## Acknowledgements
-_Use this space to list resources you find helpful and would like to give credit to._
+<!-- _Use this space to list resources you find helpful and would like to give credit to._
 
 Examples:
 * [Choose an Open Source License](https://choosealicense.com)
@@ -149,7 +149,7 @@ Examples:
 * [Malven's Grid Cheatsheet](https://grid.malven.co/)
 * [Img Shields](https://shields.io)
 * [Font Awesome](https://fontawesome.com)
-* [Github Profile Badges](https://home.aveek.io/GitHub-Profile-Badges/)
+* [Github Profile Badges](https://home.aveek.io/GitHub-Profile-Badges/) -->
 
 
 [forks-shield]: https://img.shields.io/github/forks/jeezusplays/ticket-booking-system.svg?style=for-the-badge
