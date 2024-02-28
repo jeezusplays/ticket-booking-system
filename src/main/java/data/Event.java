@@ -73,9 +73,9 @@ public class Event {
         this.endTime = endTime;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+    // public void setPrice(double price) {
+    //     this.price = price;
+    // }
 
     public void setNumTicketsAvailable(int numTicketsAvailable) {
         this.numTicketsAvailable = numTicketsAvailable;
