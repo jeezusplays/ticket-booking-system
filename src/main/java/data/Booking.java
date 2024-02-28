@@ -1,32 +1,33 @@
 package data;
 
+import java.time;
 import java.util.List;
 import java.util.Map;
 
 public class Booking {
-    private String bookingId;
-    private String customerId;
+    private String bookingID;
+    private String customerID;
     private int eventID;
     private List<Ticket> tickets;
-    private String date;
+    private LocalDateTime bookingTime;
     private String bookingStatus;
 
-    public Booking(String bookingId, String customerId, int eventID, List<Ticket> tickets, String date, String bookingStatus) {
+    public Booking(String bookingId, String customerId, int eventId, List<Ticket> tickets, LocalDateTime bookingTime, String bookingStatus) {
         this.bookingId = bookingId;
         this.customerId = customerId;
-        this.eventID = eventID;
+        this.eventId = eventId;
         this.tickets = tickets;
-        this.date = date;
+        this.bookingTime = bookingTime;
         this.bookingStatus = bookingStatus;
     }
 
     // Getters
     public String getBookingId() {
-        return bookingId;
+        return bookingID;
     }
 
     public String getCustomerId() {
-        return customerId;
+        return customerID;
     }
 
     public int getEventID() {
@@ -37,8 +38,8 @@ public class Booking {
         return tickets;
     }
 
-    public String getDate() {
-        return date;
+    public LocalDateTime getBookingTime() {
+        return bookingTime;
     }
 
     public String getBookingStatus() {
@@ -46,10 +47,10 @@ public class Booking {
     }
 
     // Setters
-    public void setDate(String date) {
-        this.date = date;
+    public void setBookingTime(LocalDateTime bookingTime) {
+        this.bookingTime = bookingTime;
     }
-
+    
     public void setBookingStatus(String bookingStatus) {
         this.bookingStatus = bookingStatus;
     }
