@@ -4,27 +4,27 @@ import java.time;
 import java.util.Map;
 
 public class Refund {
-    private int refundId;
-    private int bookingId;
+    private int refundID;
+    private int bookingID;
     private double refundAmount;
     private LocalDateTime refundDate;
     private String refundStatus;
 
-    public Refund(int refundId, int bookingId, double refundAmount, LocalDateTime refundDate, String refundStatus) {
-        this.refundId = refundId;
-        this.bookingId = bookingId;
+    public Refund(int refundID, int bookingID, double refundAmount, LocalDateTime refundDate, String refundStatus) {
+        this.refundID = refundID;
+        this.bookingID = bookingID;
         this.refundAmount = refundAmount;
         this.refundDate = refundDate;
         this.refundStatus = refundStatus;
     }
 
     // Getters
-    public int getRefundId() {
-        return refundId;
+    public int getrefundID() {
+        return refundID;
     }
 
-    public int getBookingId() {
-        return bookingId;
+    public int getbookingID() {
+        return bookingID;
     }
 
     public double getRefundAmount() {
