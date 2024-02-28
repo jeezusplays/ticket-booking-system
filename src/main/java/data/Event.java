@@ -1,22 +1,26 @@
 package data;
 
+import java.time;
+
 public class Event {
     private int eventID;
     private String eventName;
     private String venue;
-    private String date;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private TicketOption ticketOptions;
     private double price;
     private int numTicketsAvailable;
-    private double ticketCancellationFee;
 
-    public Event(int eventID, String eventName, String venue, String date, double price, int numTicketsAvailable, double ticketCancellationFee) {
+    public Event(int eventID, String eventName, String venue, LocalDateTime startTime, LocalDateTime endTime, TicketOption ticketOptions, double price, int numTicketsAvailable) {
         this.eventID = eventID;
         this.eventName = eventName;
         this.venue = venue;
-        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.ticketOptions = ticketOptions;
         this.price = price;
         this.numTicketsAvailable = numTicketsAvailable;
-        this.ticketCancellationFee = ticketCancellationFee;
     }
 
     // Getters
@@ -32,44 +36,48 @@ public class Event {
         return venue;
     }
 
-    public String getDate() {
-        return date;
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public TicketOption getTicketOptions() {
+        return ticketOptions;
     }
 
     public double getPrice() {
         return price;
     }
-
+    
     public int getNumTicketsAvailable() {
         return numTicketsAvailable;
     }
 
-    public double getTicketCancellationFee() {
-        return ticketCancellationFee;
-    }
-
     // Setters
-    public void setNumTicketsAvailable(int numTicketsAvailable) {
-        this.numTicketsAvailable = numTicketsAvailable;
-    }
-
-    public void setTicketCancellationFee(double ticketCancellationFee) {
-        this.ticketCancellationFee = ticketCancellationFee;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
     }
 
     public void setVenue(String venue) {
         this.venue = venue;
     }
 
-    public void setEventName(String eventName) {
-        this.eventName = eventName;
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setNumTicketsAvailable(int numTicketsAvailable) {
+        this.numTicketsAvailable = numTicketsAvailable;
     }
 }
