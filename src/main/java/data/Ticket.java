@@ -3,33 +3,31 @@ package data;
 import java.util.Map;
 
 public class Ticket {
-    private String ticketId;
-    private String eventId;
-    private String customerId;
+    private String ticketID;
+    private String eventID;
+    private String customerID;
     private double price;
     private Boolean isGuest;
-    private String date;
 
-    public Ticket(String ticketId, String eventId, String customerId, double price, Boolean isGuest, String date) {
-        this.ticketId = ticketId;
-        this.eventId = eventId;
-        this.customerId = customerId;
+    public Ticket(String ticketID, String eventID, String customerID, double price, Boolean isGuest) {
+        this.ticketID = ticketID;
+        this.eventID = eventID;
+        this.customerID = customerID;
         this.price = price;
         this.isGuest = isGuest;
-        this.date = date;
     }
 
     // Getters
-    public String getTicketId() {
-        return ticketId;
+    public String getticketID() {
+        return ticketID;
     }
 
-    public String getEventId() {
-        return eventId;
+    public String geteventID() {
+        return eventID;
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public String getcustomerID() {
+        return customerID;
     }
 
     public double getPrice() {
@@ -51,10 +49,6 @@ public class Ticket {
 
     public void setIsGuest(Boolean isGuest) {
         this.isGuest = isGuest;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     // Other methods
