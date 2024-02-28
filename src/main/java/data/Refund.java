@@ -1,15 +1,16 @@
 package data;
 
+import java.time;
 import java.util.Map;
 
 public class Refund {
     private int refundId;
     private int bookingId;
     private double refundAmount;
-    private String refundDate;
+    private LocalDateTime refundDate;
     private String refundStatus;
 
-    public Refund(int refundId, int bookingId, double refundAmount, String refundDate, String refundStatus) {
+    public Refund(int refundId, int bookingId, double refundAmount, LocalDateTime refundDate, String refundStatus) {
         this.refundId = refundId;
         this.bookingId = bookingId;
         this.refundAmount = refundAmount;
@@ -30,7 +31,7 @@ public class Refund {
         return refundAmount;
     }
 
-    public String getRefundDate() {
+    public LocalDateTime getRefundDate() {
         return refundDate;
     }
 
@@ -43,7 +44,7 @@ public class Refund {
         this.refundAmount = refundAmount;
     }
 
-    public void setRefundDate(String refundDate) {
+    public void setRefundDate(LocalDateTime refundDate) {
         this.refundDate = refundDate;
     }
 
