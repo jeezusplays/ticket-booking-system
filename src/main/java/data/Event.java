@@ -1,31 +1,63 @@
 package data;
 
 import java.time;
+import java.util.List;
+import java.util.Map;
 
 public class Event {
-    private int eventID;
+    private String eventID;
+    private EventManager eventManagerID;
+    private List<TicketingOfficer> ticketOfficers;
+    private List<TicketOption> ticketOptions;
+    private double ticketCancellationFee;
+    private double basePrice;
     private String eventName;
     private String venue;
     private LocalDateTime startTime;
+    private int duration;
     private LocalDateTime endTime;
-    private TicketOption ticketOptions;
-    private double price;
+    private List<Ticket> attendance;
     private int numTicketsAvailable;
 
-    public Event(int eventID, String eventName, String venue, LocalDateTime startTime, LocalDateTime endTime, TicketOption ticketOptions, double price, int numTicketsAvailable) {
+    public Event(String eventID, EventManager eventManagerID, List<TicketingOfficer> ticketOfficers, List<TicketOption> ticketOptions, double ticketCancellationFee, double basePrice, String eventName, String venue, LocalDateTime startTime, int duration, LocalDateTime endTime, List<Ticket> attendance, int numTicketsAvailable) {
         this.eventID = eventID;
+        this.eventManagerID = eventManagerID;
+        this.ticketOfficers = ticketOfficers;
+        this.ticketOptions = ticketOptions;
+        this.ticketCancellationFee = ticketCancellationFee;
+        this.basePrice = basePrice;
         this.eventName = eventName;
         this.venue = venue;
         this.startTime = startTime;
+        this.duration = duration;
         this.endTime = endTime;
-        this.ticketOptions = ticketOptions;
-        this.price = price;
+        this.attendance = attendance;
         this.numTicketsAvailable = numTicketsAvailable;
     }
 
     // Getters
     public int getEventID() {
         return eventID;
+    }
+
+    public EventManager getEventManagerID() {
+        return eventManagerID;
+    }
+
+    public List<TicketingOfficer> getTicketOfficers() {
+        return ticketOfficers;
+    }
+
+    public List<TicketOption> getTicketOptions() {
+        return ticketOptions;
+    }
+
+    public double getTicketCancellationFee() {
+        return ticketCancellationFee;
+    }
+
+    public double getBasePrice() {
+        return basePrice;
     }
 
     public String getEventName() {
@@ -40,16 +72,16 @@ public class Event {
         return startTime;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
     public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public TicketOption getTicketOptions() {
-        return ticketOptions;
-    }
-
-    public double getPrice() {
-        return price;
+    public List<Ticket> getAttendance() {
+        return attendance;
     }
     
     public int getNumTicketsAvailable() {
@@ -57,6 +89,10 @@ public class Event {
     }
 
     // Setters
+    public void setTicketCancellationFee(double ticketCancellationFee) {
+        this.ticketCancellationFee = ticketCancellationFee;
+    }
+
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }
@@ -69,15 +105,16 @@ public class Event {
         this.startTime = startTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
-    // public void setPrice(double price) {
-    //     this.price = price;
+    // public void setEndTime(LocalDateTime endTime) {
+    //     this.endTime = endTime;
     // }
 
     public void setNumTicketsAvailable(int numTicketsAvailable) {
         this.numTicketsAvailable = numTicketsAvailable;
+    }
+
+    // Other methods
+    public Map<String, Object> getEventDetails() {
+        // ...
     }
 }
