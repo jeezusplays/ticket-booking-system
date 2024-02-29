@@ -7,15 +7,19 @@ import java.util.Map;
 public class Booking {
     private String bookingID;
     private String customerID;
+    private String ticketOfficerID;
     private int eventID;
+    private TicketOption ticketOption;
     private List<Ticket> tickets;
     private LocalDateTime bookingTime;
     private String bookingStatus;
 
-    public Booking(String bookingId, String customerId, int eventId, List<Ticket> tickets, LocalDateTime bookingTime, String bookingStatus) {
-        this.bookingId = bookingId;
-        this.customerId = customerId;
-        this.eventId = eventId;
+    public Booking(String bookingID, String customerID, String ticketOfficerID, int eventID, TicketOption ticketOption, List<Ticket> tickets, LocalDateTime bookingTime, String bookingStatus) {
+        this.bookingID = bookingID;
+        this.customerID = customerID;
+        this.ticketOfficerID = ticketOfficerID;
+        this.eventID = eventID;
+        this.ticketOption = ticketOption;
         this.tickets = tickets;
         this.bookingTime = bookingTime;
         this.bookingStatus = bookingStatus;
@@ -30,8 +34,16 @@ public class Booking {
         return customerID;
     }
 
+    public String getTicketOfficerId() {
+        return ticketOfficerID;
+    }
+
     public int getEventID() {
         return eventID;
+    }
+
+    public TicketOption getTicketOption() {
+        return ticketOption;
     }
 
     public List<Ticket> getTickets() {
