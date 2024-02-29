@@ -1,19 +1,19 @@
 import java.util.List;
 
 public class TicketController {
-    // Example ticket database
-    private List<Ticket> tickets;
+    private TicketService ticketService;
 
-    // Constructor
-    public TicketController(List<Ticket> tickets) {
-        this.tickets = tickets;
+    public TicketController(TicketService ticketService) {
+        this.ticketService = ticketService;
     }
 
-    // Method to get tickets for a user
+    // Get all tickets for a user method
     public List<Ticket> getTickets(User user) {
-        // Implement logic to retrieve tickets for the specified user
-        // Example: Filter the ticket list based on user ID
-        List<Ticket> userTickets = /* Filter tickets based on user ID */;
-        return userTickets;
+        return ticketService.getTickets(user);
+    }
+
+    // Verify a ticket method
+    public boolean verifyTicket(String ticketID) {
+        return ticketService.verifyTicket(ticketID);
     }
 }
