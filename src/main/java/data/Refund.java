@@ -53,7 +53,7 @@ public class Refund {
     }
 
     // Other methods
-    public Map<String, float> getRefundDetails() {
+    public Map<String, Object> getRefundDetails() {
         return null;
     }
 }
