@@ -1,43 +1,40 @@
 import java.util.List;
+import java.util.Map;
 
 public class EventController {
-    // Example event database
-    private List<Event> events;
+    private EventService eventService;
 
-    // Constructor
-    public EventController(List<Event> events) {
-        this.events = events;
+    public EventController(EventService eventService) {
+        this.eventService = eventService;
     }
 
-    // Method to get all events
+    // Get all events method
     public List<Event> getEvents() {
-        // Implement logic to retrieve all events
-        // Example: Return the list of events
-        return events;
+        return eventService.getEvents();
     }
 
-    // Method to cancel an event
-    public void cancelEvent(Event event) {
-        // Implement logic to cancel the specified event
-        // Example: Remove the event from the event list
-        events.remove(event);
+    // Get events managed by a specific EventManager
+    public List<Event> getMyManagedEvents(EventManager eventManager) {
+        return eventService.getMyManagedEvents(eventManager);
     }
 
-    // Method to update an event
-    public Event updateEvent(Event event, EventManager eventManager, EventDetails details) {
-        // Implement logic to update the specified event
-        // Example: Update event details and return the modified event
-        event.setDetails(details);
-        event.setEventManager(eventManager);
-        return event;
+    // Cancel an event method
+    public String cancelEvent(Event event) {
+        return eventService.cancelEvent(event);
     }
 
-    // Method to create a new event
-    public Event createEvent(EventManager eventManager, EventDetails details) {
-        // Implement logic to create a new event
-        // Example: Create a new Event object and add it to the event list
-        Event newEvent = new Event(eventManager, details);
-        events.add(newEvent);
-        return newEvent;
+    // Update event details method
+    public Event updateEvent(Event event, EventManager eventManager, Map<String, Object> details) {
+        return eventService.updateEvent(event, eventManager, details);
+    }
+
+    // Create a new event method
+    public Event createEvent(EventManager eventManager, Map<String, Object> details) {
+        return eventService.createEvent(eventManager, details);
+    }
+
+    // Add officers to an event method
+    public Map<String, Boolean> addOfficer(EventManager eventManager, List<String> userIds) {
+        return eventService.addOfficer(eventManager, userIds);
     }
 }
