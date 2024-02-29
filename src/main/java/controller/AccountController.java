@@ -1,48 +1,32 @@
-import java.util.List;
-import java.util.Map;
-
 public class AccountController {
-    // Example user database
-    private List<User> users;
-    private User loggedInUser;
+    private AccountService accountService;
 
-    // Constructor
-    public AccountController(List<User> users) {
-        this.users = users;
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
     }
 
-    // Method to perform login
-    public User login(String username, String password) {
-        // Implement login logic here
-        // Example: Iterate through the user list and check credentials
-        for (User user : users) {
-            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                loggedInUser = user;
-                return user;
-            }
-        }
-        return null; // Return null if login fails
+    // Login method
+    public User login(String email, String password) {
+        return accountService.login(email, password);
     }
 
-    // Method to perform logout
+    // Logout method
     public void logout() {
-        loggedInUser = null;
+        accountService.logout();
     }
 
-    // Method to create a new user
-    public User create(String username, String password) {
-        // Implement user creation logic here
-        // Example: Create a new user object and add it to the user list
-        User newUser = new User(username, password);
-        users.add(newUser);
-        return newUser;
+    // Create Customer method
+    public Customer createCustomer(String email, String name, String password) {
+        return accountService.createCustomer(email, name, password);
     }
 
-    // Method to add an officer to an event manager
-    public Map<String, Boolean> addOfficer(EventManager eventManager, List<String> userIDs) {
-        // Implement adding officer logic here
-        // Example: Iterate through user IDs, find corresponding users, and add them to the event manager
-        Map<String, Boolean> result = eventManager.addOfficers(userIDs, users);
-        return result;
+    // Create Event Manager method
+    public EventManager createEventManager(String email, String name, String password) {
+        return accountService.createEventManager(email, name, password);
+    }
+
+    // Create Ticket Officer method
+    public TicketOfficer createTicketOfficer(String email, String name, String password) {
+        return accountService.createTicketOfficer(email, name, password);
     }
 }
