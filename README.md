@@ -38,7 +38,27 @@ and seminars.
 
 ## Getting Started
 ### Prerequisites
-* [maven](https://maven.apache.org/download.cgi)
+* Ensure you have [Maven](https://maven.apache.org/download.cgi) installed on your machine.
+* MySQL database server running locally.
+
+### Database Setup
+To set up the database needed for the ticket booking system, follow these steps:
+
+1. Open phpMyAdmin in your web browser on your local machine.
+
+2. Log in with your MySQL server's username and password.
+
+3. Once logged in, click on the "Databases" tab in the top navigation bar.
+
+4. In the "Create database" section, enter `ticket-booking-system` as the database name, and choose `utf8mb4_general_ci`. Click "Create".
+
+Run the `DatabaseInitializer.java` class to create the necessary tables in your MySQL database.
+  - In your IDE, run these Maven commands in the terminal in sequence.
+    - Compile the Project: 
+      - mvn clean compile
+    - Initialize the Database: 
+      - mvn exec:java -Dexec.mainClass=com.myapp.DatabaseInitializer
+  This will execute the SQL script to create the database tables.
 
 ### Installation
 1. Clone the repo
