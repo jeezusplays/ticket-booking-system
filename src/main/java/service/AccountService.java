@@ -1,3 +1,5 @@
+package service;
+
 public class AccountService {
     private DatabaseService databaseService;
 

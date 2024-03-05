@@ -1,3 +1,5 @@
+package service;
+
 public class QRCodeService {
     private EmailService emailService;
     private TicketService ticketService;
