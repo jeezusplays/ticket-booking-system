@@ -1,5 +1,12 @@
 package controller;
 
+import service.BookingService;
+import user.User;
+import user.TicketingOfficer;
+
+import data.Booking;
+import data.Refund;
+
 import java.util.List;
 
 public class BookingController {
@@ -20,7 +27,7 @@ public class BookingController {
     }
 
     // Create a new booking for a user by a ticket officer method
-    public Booking createBookingFor(TicketOfficer ticketOfficer, int numTickets, String eventID, int numGuests, String userID) {
+    public Booking createBookingFor(TicketingOfficer ticketOfficer, int numTickets, String eventID, int numGuests, String userID) {
         return bookingService.createBookingFor(ticketOfficer, numTickets, eventID, numGuests, userID);
     }
 

@@ -1,5 +1,9 @@
 package controller;
 
+import service.EventService;
+import user.EventManager;
+
+import data.Event;
 import java.util.List;
 import java.util.Map;
 
@@ -21,8 +25,8 @@ public class EventController {
     }
 
     // Cancel an event method
-    public String cancelEvent(Event event) {
-        return eventService.cancelEvent(event);
+    public String cancelEvent(EventManager eventManager, Event event) {
+        return eventService.cancelEvent(eventManager, event);
     }
 
     // Update event details method

@@ -1,5 +1,11 @@
 package controller;
 
+import service.AccountService;
+import user.User;
+import user.Customer;
+import user.EventManager;
+import user.TicketingOfficer;
+
 public class AccountController {
     private AccountService accountService;
 
@@ -13,22 +19,22 @@ public class AccountController {
     }
 
     // Logout method
-    public void logout() {
-        accountService.logout();
+    public void logout(int userID) {
+        accountService.logout(userID);
     }
 
     // Create Customer method
-    public Customer createCustomer(String email, String name, String password) {
-        return accountService.createCustomer(email, name, password);
+    public Customer createCustomer(int id, String email, String password, String name, String type, double accountBalance) {
+        return accountService.createCustomer(id, email, password, name, type, accountBalance);
     }
 
     // Create Event Manager method
-    public EventManager createEventManager(String email, String name, String password) {
-        return accountService.createEventManager(email, name, password);
+    public EventManager createEventManager(int id, String email, String password, String name, String type) {
+        return accountService.createEventManager(id, email, name, password, type);
     }
 
     // Create Ticket Officer method
-    public TicketOfficer createTicketOfficer(String email, String name, String password) {
-        return accountService.createTicketOfficer(email, name, password);
+    public TicketingOfficer createTicketingOfficer(int id, String email, String password, String name, String type) {
+        return accountService.createTicketingOfficer(id, email, password, name, type);
     }
 }

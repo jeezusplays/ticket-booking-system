@@ -1,5 +1,9 @@
 package controller;
 
+import service.TicketService;
+import user.User;
+
+import data.Ticket;
 import java.util.List;
 
 public class TicketController {
