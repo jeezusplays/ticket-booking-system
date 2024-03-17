@@ -1,27 +1,29 @@
 -- User Supertype
 CREATE TABLE IF NOT EXISTS User (
-    userID VARCHAR(10) PRIMARY KEY,
-    username VARCHAR(30) NOT NULL,
+    userID INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(30) NOT NULL,
     password VARCHAR(30) NOT NULL,
-    role VARCHAR(30) NOT NULL
+    name VARCHAR(30) NOT NULL,
+    type VARCHAR(30) NOT NULL
 );
+
 
 -- Customer Subtype
 CREATE TABLE IF NOT EXISTS Customer (
-    userID VARCHAR(10) PRIMARY KEY,
+    userID INT PRIMARY KEY,
     accountBalance DOUBLE NOT NULL,
     FOREIGN KEY (userID) REFERENCES User(userID)
 );
 
 -- EventManager Subtype
 CREATE TABLE IF NOT EXISTS EventManager (
-    userID VARCHAR(10) PRIMARY KEY,
+    userID INT PRIMARY KEY,
     FOREIGN KEY (userID) REFERENCES User(userID)
 );
 
 -- TicketOfficer Subtype
 CREATE TABLE IF NOT EXISTS TicketOfficer (
-    userID VARCHAR(10) PRIMARY KEY,
+    userID INT PRIMARY KEY,
     FOREIGN KEY (userID) REFERENCES User(userID)
 );
 
