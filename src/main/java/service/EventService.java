@@ -1,5 +1,7 @@
 package service;
 
+import user.EventManager;
+import data.Event;
 import java.util.List;
 import java.util.Map;
 

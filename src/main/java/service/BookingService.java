@@ -1,5 +1,13 @@
 package service;
 
+import user.User;
+import user.TicketingOfficer;
+import user.EventManager;
+
+import data.Booking;
+import data.Event;
+import data.Refund;
+
 import java.util.List;
 
 public class BookingService {
@@ -27,7 +35,7 @@ public class BookingService {
     }
 
     // Create a new booking for a user by a ticket officer method
-    public Booking createBookingFor(TicketOfficer ticketOfficer, int numTickets, String eventID, int numGuests, String userID) {
+    public Booking createBookingFor(TicketingOfficer ticketOfficer, int numTickets, String eventID, int numGuests, String userID) {
         return databaseService.createBookingFor(ticketOfficer, numTickets, eventID, numGuests, userID);
     }
 

@@ -1,5 +1,7 @@
 package service;
 
+import user.User;
+import data.Ticket;
 import java.util.ArrayList;
 import java.util.List;
 
