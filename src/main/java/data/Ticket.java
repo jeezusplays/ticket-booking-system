@@ -3,21 +3,18 @@ package data;
 import java.util.Map;
 
 public class Ticket {
-    private String ticketID;
-    // private String eventID;
+    private Integer ticketID;
+    private Integer eventID;
     // private String customerID;
     // private double price;
     private Boolean isGuest;
     private Boolean attended;
 
-    // public Ticket(String ticketID, String eventID, String customerID, double price, Boolean isGuest) {
-    public Ticket(String ticketID, Boolean isGuest) {
+    public Ticket(Integer ticketID, Integer eventID, Boolean isGuest, Boolean attended) {
         this.ticketID = ticketID;
-        // this.eventID = eventID;
-        // this.customerID = customerID;
-        // this.price = price;
+        this.eventID = eventID;
         this.isGuest = isGuest;
-        this.attended = false;
+        this.attended = attended;
     }
 
     // Getters
