@@ -1,10 +1,23 @@
+-- Drop Tables
+DROP TABLE IF EXISTS Refund;
+DROP TABLE IF EXISTS Booking;
+DROP TABLE IF EXISTS Ticket;
+DROP TABLE IF EXISTS TicketOption;
+DROP TABLE IF EXISTS AuthorisedOfficers;
+DROP TABLE IF EXISTS Event;
+DROP TABLE IF EXISTS TicketOfficer;
+DROP TABLE IF EXISTS EventManager;
+DROP TABLE IF EXISTS Customer;
+DROP TABLE IF EXISTS User;
+
+
 -- User Supertype
 CREATE TABLE IF NOT EXISTS User (
     userID INT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(30) NOT NULL,
     password VARCHAR(30) NOT NULL,
     name VARCHAR(30) NOT NULL,
-    type VARCHAR(30) NOT NULL
+    type ENUM('customer', 'eventmanager', 'ticketofficer') NOT NULL DEFAULT 'customer'
 );
 
 
@@ -29,22 +42,22 @@ CREATE TABLE IF NOT EXISTS TicketOfficer (
 
 -- Event Table
 CREATE TABLE IF NOT EXISTS Event (
-    eventID VARCHAR(10) PRIMARY KEY,
-    managerID VARCHAR(10),
+    eventID INT PRIMARY KEY AUTO_INCREMENT,
+    managerID INT NOT NULL,
     basePrice DOUBLE NOT NULL,
     eventName VARCHAR(30) NOT NULL,
     venue VARCHAR(50) NOT NULL,
     startTime DATETIME NOT NULL,
     duration INT NOT NULL,
     ticketCancellationFee DOUBLE NOT NULL,
-    isCancelled TINYINT NOT NULL,
+    status ENUM('draft', 'published', 'cancelled') NOT NULL DEFAULT 'draft',
     FOREIGN KEY (managerID) REFERENCES EventManager(userID)
 );
 
 -- AuthorisedOfficers Associative Table
 CREATE TABLE IF NOT EXISTS AuthorisedOfficers (
-    ticketOfficerID VARCHAR(10),
-    eventID VARCHAR(10),
+    ticketOfficerID INT NOT NULL,
+    eventID INT NOT NULL,
     timeStamp DATETIME NOT NULL,
     PRIMARY KEY (ticketOfficerID, eventID),
     FOREIGN KEY (ticketOfficerID) REFERENCES TicketOfficer(userID),
@@ -53,18 +66,18 @@ CREATE TABLE IF NOT EXISTS AuthorisedOfficers (
 
 -- TicketOption Table
 CREATE TABLE IF NOT EXISTS TicketOption (
-    ticketOptionID VARCHAR(10) PRIMARY KEY,
-    eventID VARCHAR(10),
+    ticketOptionID INT PRIMARY KEY AUTO_INCREMENT,
+    eventID INT NOT NULL,
     name VARCHAR(30) NOT NULL,
-    priceMultiplier INT NOT NULL,
-    totalAvailable INT NOT NULL,
+    priceMultiplier DOUBLE NOT NULL,
+    totalAvailable DOUBLE NOT NULL, 
     FOREIGN KEY (eventID) REFERENCES Event(eventID)
 );
 
 -- Ticket Table
 CREATE TABLE IF NOT EXISTS Ticket (
-    ticketID VARCHAR(10) PRIMARY KEY,
-    bookingID VARCHAR(10),
+    ticketID INT PRIMARY KEY AUTO_INCREMENT,
+    bookingID INT NOT NULL,
     isGuest TINYINT NOT NULL,
     attended TINYINT NOT NULL,
     FOREIGN KEY (bookingID) REFERENCES Booking(bookingID)
@@ -72,11 +85,11 @@ CREATE TABLE IF NOT EXISTS Ticket (
 
 -- Booking Table
 CREATE TABLE IF NOT EXISTS Booking (
-    bookingID VARCHAR(10) PRIMARY KEY,
-    eventID VARCHAR(10),
-    ticketOptionID VARCHAR(10),
-    customerID VARCHAR(10),
-    ticketOfficerID VARCHAR(10),
+    bookingID INT PRIMARY KEY AUTO_INCREMENT,
+    eventID INT NOT NULL,
+    ticketOptionID INT NOT NULL,
+    customerID INT NOT NULL,
+    ticketOfficerID INT,
     bookedTime DATETIME NOT NULL,
     FOREIGN KEY (eventID) REFERENCES Event(eventID),
     FOREIGN KEY (ticketOptionID) REFERENCES TicketOption(ticketOptionID),
@@ -87,8 +100,9 @@ CREATE TABLE IF NOT EXISTS Booking (
 -- Refund Table
 CREATE TABLE IF NOT EXISTS Refund (
     refundID INT PRIMARY KEY AUTO_INCREMENT,
-    bookingID VARCHAR(10),
+    bookingID INT NOT NULL,
     refundDate DATETIME NOT NULL,
     refundStatus VARCHAR(30) NOT NULL,
     FOREIGN KEY (bookingID) REFERENCES Booking(bookingID)
 );
+
