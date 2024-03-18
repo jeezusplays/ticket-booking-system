@@ -10,15 +10,14 @@ public class Ticket {
     private Boolean isGuest;
     private Boolean attended;
 
-    public Ticket(Integer ticketID, Integer eventID, Boolean isGuest, Boolean attended) {
+    public Ticket(Integer ticketID, Boolean isGuest, Boolean attended) {
         this.ticketID = ticketID;
-        this.eventID = eventID;
         this.isGuest = isGuest;
         this.attended = attended;
     }
 
     // Getters
-    public String getticketID() {
+    public Integer getticketID() {
         return ticketID;
     }
 

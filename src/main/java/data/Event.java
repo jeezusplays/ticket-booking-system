@@ -8,7 +8,7 @@ import user.TicketingOfficer;
 
 public class Event {
     private int eventID;
-    private int eventManagerID;
+    private EventManager eventManager;
     private List<Integer> ticketOfficers;
     private List<Integer> ticketOptions;
     private double ticketCancellationFee;
@@ -23,7 +23,7 @@ public class Event {
 
     public Event(
         int eventID,
-        int eventManagerID,
+        EventManager eventManager,
         List<Integer> ticketOfficerIDs,
         List<Integer> ticketOptionIDs,
         double ticketCancellationFee,
@@ -36,7 +36,7 @@ public class Event {
         List<Ticket> attendance,
         int numTicketsAvailable) {
             this.eventID = eventID;
-            this.eventManagerID = eventManagerID;
+            this.eventManager = eventManager;
             this.ticketOfficers = ticketOfficerIDs;
             this.ticketOptions = ticketOptionIDs;
             this.ticketCancellationFee = ticketCancellationFee;
@@ -55,8 +55,8 @@ public class Event {
         return eventID;
     }
 
-    public int getEventManagerID() {
-        return eventManagerID;
+    public EventManager geteventManager() {
+        return eventManager;
     }
 
     public List<Integer> getTicketOfficers() {
