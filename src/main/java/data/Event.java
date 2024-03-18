@@ -21,20 +21,33 @@ public class Event {
     private List<Ticket> attendance;
     private int numTicketsAvailable;
 
-    public Event(int eventID, int eventManagerID, List<Integer> ticketOfficerIDs, List<Integer> ticketOptionIDs, double ticketCancellationFee, double basePrice, String eventName, String venue, LocalDateTime startTime, int duration, LocalDateTime endTime, List<Ticket> attendance, int numTicketsAvailable) {
-        this.eventID = eventID;
-        this.eventManagerID = eventManagerID;
-        this.ticketOfficers = ticketOfficerIDs;
-        this.ticketOptions = ticketOptionIDs;
-        this.ticketCancellationFee = ticketCancellationFee;
-        this.basePrice = basePrice;
-        this.eventName = eventName;
-        this.venue = venue;
-        this.startTime = startTime;
-        this.duration = duration;
-        this.endTime = endTime;
-        this.attendance = attendance;
-        this.numTicketsAvailable = numTicketsAvailable;
+    public Event(
+        int eventID,
+        int eventManagerID,
+        List<Integer> ticketOfficerIDs,
+        List<Integer> ticketOptionIDs,
+        double ticketCancellationFee,
+        double basePrice,
+        String eventName,
+        String venue,
+        LocalDateTime startTime,
+        int duration,
+        LocalDateTime endTime,
+        List<Ticket> attendance,
+        int numTicketsAvailable) {
+            this.eventID = eventID;
+            this.eventManagerID = eventManagerID;
+            this.ticketOfficers = ticketOfficerIDs;
+            this.ticketOptions = ticketOptionIDs;
+            this.ticketCancellationFee = ticketCancellationFee;
+            this.basePrice = basePrice;
+            this.eventName = eventName;
+            this.venue = venue;
+            this.startTime = startTime;
+            this.duration = duration;
+            this.endTime = endTime;
+            this.attendance = attendance;
+            this.numTicketsAvailable = numTicketsAvailable;
     }
 
     // Getters
