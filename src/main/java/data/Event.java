@@ -3,12 +3,14 @@ package data;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import user.EventManager;
+import user.TicketingOfficer;
 
 public class Event {
-    private String eventID;
-    private EventManager eventManagerID;
-    private List<TicketingOfficer> ticketOfficers;
-    private List<TicketOption> ticketOptions;
+    private int eventID;
+    private int eventManagerID;
+    private List<Integer> ticketOfficers;
+    private List<Integer> ticketOptions;
     private double ticketCancellationFee;
     private double basePrice;
     private String eventName;
@@ -19,11 +21,11 @@ public class Event {
     private List<Ticket> attendance;
     private int numTicketsAvailable;
 
-    public Event(String eventID, EventManager eventManagerID, List<TicketingOfficer> ticketOfficers, List<TicketOption> ticketOptions, double ticketCancellationFee, double basePrice, String eventName, String venue, LocalDateTime startTime, int duration, LocalDateTime endTime, List<Ticket> attendance, int numTicketsAvailable) {
+    public Event(int eventID, int eventManagerID, List<Integer> ticketOfficerIDs, List<Integer> ticketOptionIDs, double ticketCancellationFee, double basePrice, String eventName, String venue, LocalDateTime startTime, int duration, LocalDateTime endTime, List<Ticket> attendance, int numTicketsAvailable) {
         this.eventID = eventID;
         this.eventManagerID = eventManagerID;
-        this.ticketOfficers = ticketOfficers;
-        this.ticketOptions = ticketOptions;
+        this.ticketOfficers = ticketOfficerIDs;
+        this.ticketOptions = ticketOptionIDs;
         this.ticketCancellationFee = ticketCancellationFee;
         this.basePrice = basePrice;
         this.eventName = eventName;
@@ -40,15 +42,15 @@ public class Event {
         return eventID;
     }
 
-    public EventManager getEventManagerID() {
+    public int getEventManagerID() {
         return eventManagerID;
     }
 
-    public List<TicketingOfficer> getTicketOfficers() {
+    public List<Integer> getTicketOfficers() {
         return ticketOfficers;
     }
 
-    public List<TicketOption> getTicketOptions() {
+    public List<Integer> getTicketOptions() {
         return ticketOptions;
     }
 
@@ -116,5 +118,6 @@ public class Event {
     // Other methods
     public Map<String, Object> getEventDetails() {
         // ...
+        return null;
     }
 }
