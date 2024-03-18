@@ -1,20 +1,17 @@
 -- Insert Users
-INSERT INTO User (userID, username, password, role) VALUES
-('U001', 'admin', 'password', 'EventManager'),
-('U002', 'officer1', 'password', 'TicketOfficer'),
-('U003', 'customer1', 'password', 'Customer');
+INSERT INTO User (email, password, name, type) VALUES
+ ('customer1@gmail.com', 'password', 'Cust', 'Customer'),
+ ('admin@gmail.com', 'password', 'Admin', 'EventManager'),
+ ('officer1@gmail.com', 'password', 'T_Officer','TicketOfficer');
 
--- Insert Customers
-INSERT INTO Customer (userID, accountBalance) VALUES
-('U003', 200.00);
+-- Insert Customer
+INSERT INTO Customer (userID, accountBalance) VALUES (1, 1000.00);
 
--- Insert EventManagers
-INSERT INTO EventManager (userID) VALUES
-('U001');
+-- Insert EventManager
+INSERT INTO EventManager (userID) VALUES (2);
 
--- Insert TicketOfficers
-INSERT INTO TicketOfficer (userID) VALUES
-('U002');
+-- Insert TicketOfficer
+INSERT INTO TicketOfficer (userID) VALUES (3);
 
 -- Insert Events
 -- INSERT INTO Event (eventID, managerID, basePrice, eventName, venue, startTime, duration, ticketCancellationFee, isCancelled) VALUES
