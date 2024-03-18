@@ -2,15 +2,16 @@ package user;
 
 public abstract class User {
     private int id;
-    // private String username;
     private String password;
     private String email;
+    private String name;
     private String type;
 
-    public User(int id, String password, String email, String type) {
+    public User(int id, String email, String password, String name, String type) {
         this.id = id;
         this.password = password;
         this.email = email;
+        this.name = name;
         this.type = type;
     }
 
@@ -24,6 +25,10 @@ public abstract class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getType() {
