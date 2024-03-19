@@ -4,20 +4,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import user.*;
+
 public class Booking {
     private String bookingID;
-    private String customerID;
-    private String ticketOfficerID;
+    private Customer customer;
+    private TicketingOfficer ticketOfficer;
     private int eventID;
     private TicketOption ticketOption;
     private List<Ticket> tickets;
     private LocalDateTime bookingTime;
     private String bookingStatus;
 
-    public Booking(String bookingID, String customerID, String ticketOfficerID, int eventID, TicketOption ticketOption, List<Ticket> tickets, LocalDateTime bookingTime, String bookingStatus) {
+    public Booking(String bookingID, Customer customer, TicketingOfficer ticketOfficer, int eventID, TicketOption ticketOption, List<Ticket> tickets, LocalDateTime bookingTime, String bookingStatus) {
         this.bookingID = bookingID;
-        this.customerID = customerID;
-        this.ticketOfficerID = ticketOfficerID;
+        this.customer = customer;
+        this.ticketOfficer = ticketOfficer;
         this.eventID = eventID;
         this.ticketOption = ticketOption;
         this.tickets = tickets;
@@ -30,12 +32,12 @@ public class Booking {
         return bookingID;
     }
 
-    public String getCustomerId() {
-        return customerID;
+    public User getCustomer() {
+        return customer;
     }
 
-    public String getTicketOfficerId() {
-        return ticketOfficerID;
+    public User getTicketOfficerId() {
+        return ticketOfficer;
     }
 
     public int getEventID() {
