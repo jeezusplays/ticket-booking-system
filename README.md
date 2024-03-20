@@ -9,7 +9,7 @@
     <img src="logo/logo.png" alt="Logo" width="100" height="100">
   </a>
 
-<h3 align="center">Ticket Booking System</h3>
+<h3 align="center">Ticks - Ticket Booking System</h3>
 
   <p align="center">
     Manage booking of tickets for music concerts and events!
@@ -27,8 +27,7 @@
 
 
 ## About The Project
-Ticket booking system that manages the booking of tickets for various events, such as music concerts, theatre shows,
-and seminars. The system allows users to view available events, book tickets, and view their booking history. The system also allows event organizers to add new events, view event details, and view the list of attendees for their events.
+Ticks manages the booking of tickets for various events, such as music concerts, theatre shows, and seminars. The system allows users to view available events, book tickets, and view their booking history. The system also allows event organizers to add new events, view event details, and view the list of attendees for their events.
 
 ## Getting Started
 ### Prerequisites
