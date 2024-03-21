@@ -16,7 +16,15 @@ public class Booking {
     private LocalDateTime bookingTime;
     private String bookingStatus;
 
-    public Booking(String bookingID, Customer customer, TicketingOfficer ticketOfficer, int eventID, TicketOption ticketOption, List<Ticket> tickets, LocalDateTime bookingTime, String bookingStatus) {
+    public Booking(
+        String bookingID, 
+        Customer customer, 
+        TicketingOfficer ticketOfficer, 
+        int eventID, 
+        TicketOption ticketOption, 
+        List<Ticket> tickets, 
+        LocalDateTime bookingTime, 
+        String bookingStatus) {
         this.bookingID = bookingID;
         this.customer = customer;
         this.ticketOfficer = ticketOfficer;
