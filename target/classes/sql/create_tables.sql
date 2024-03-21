@@ -91,7 +91,6 @@ CREATE TABLE IF NOT EXISTS Booking (
     customerID INT NOT NULL,
     ticketOfficerID INT,
     bookedTime DATETIME NOT NULL,
-    status ENUM('pending', 'confirmed', 'cancelled') NOT NULL DEFAULT 'pending',
     FOREIGN KEY (eventID) REFERENCES Event(eventID),
     FOREIGN KEY (ticketOptionID) REFERENCES TicketOption(ticketOptionID),
     FOREIGN KEY (customerID) REFERENCES Customer(userID),
@@ -103,7 +102,7 @@ CREATE TABLE IF NOT EXISTS Refund (
     refundID INT PRIMARY KEY AUTO_INCREMENT,
     bookingID INT NOT NULL,
     refundDate DATETIME NOT NULL,
-    refundStatus ENUM('pending', 'completed') NOT NULL DEFAULT 'pending',
+    refundStatus VARCHAR(30) NOT NULL,
     FOREIGN KEY (bookingID) REFERENCES Booking(bookingID)
 );
 
