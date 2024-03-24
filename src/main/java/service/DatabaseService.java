@@ -5,18 +5,22 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.HashMap;
-import java.sql.Statement;
 
-import javax.naming.spi.DirStateFactory.Result;
-
-
-import user.*;
-import data.*;
+import data.Booking;
+import data.Event;
+import data.Refund;
+import data.Ticket;
+import data.TicketOption;
+import user.Customer;
+import user.EventManager;
+import user.TicketingOfficer;
+import user.User;
 
 
 public class DatabaseService {
@@ -203,7 +207,11 @@ public class DatabaseService {
         }
     }
 
-    private User getUser(Integer userID){
+    private User getUser(int userID){
+
+        if (userID == 0){
+            return null;
+        }
 
         String query = "SELECT * FROM users WHERE id = ?";
 
@@ -276,7 +284,7 @@ public class DatabaseService {
         }
     }
 
-    public Customer getCustomer(Integer userID){
+    public Customer getCustomer(int userID){
         User user = getUser(userID);
         if (user instanceof Customer) {
             return (Customer) user;
@@ -286,7 +294,7 @@ public class DatabaseService {
         }
     }
 
-    public EventManager getEventManager(Integer userID){
+    public EventManager getEventManager(int userID){
         User user = getUser(userID);
         if (user instanceof EventManager) {
             return (EventManager) user;
@@ -296,7 +304,10 @@ public class DatabaseService {
         }
     }
 
-    public TicketingOfficer getTicketingOfficer(Integer userID){
+    public TicketingOfficer getTicketingOfficer(int userID){
+        if (getUser(userID) == null){
+            return null;
+        }
         User user = getUser(userID);
         if (user instanceof TicketingOfficer) {
             return (TicketingOfficer) user;
@@ -306,40 +317,47 @@ public class DatabaseService {
         }
     }
 
-    public Map<String, Boolean> addOfficerToEvent(Integer eventManagerID, List<String> userIDs) {
+    public Map<Integer, Boolean> addOfficerToEvent(int eventManagerID, int eventID, List<Integer> userIDs) {
         // Implement logic to associate officers with an event managed by the specified event manager
         // Return a map indicating the success or failure of adding each officer
 
-        HashMap<String, Boolean> results = new HashMap<String,Boolean>();
+        HashMap<Integer, Boolean> results = new HashMap<Integer,Boolean>();
 
-        try {
-
-            // Add the specified officers to the event
-            for (String userID : userIDs) {
-                String query = "INSERT INTO event_ticket_officers (event_manager_id, ticket_officer_id) VALUES (?, ?)";
+        // Check if the event manager is associated with the event
+        if (getManagedEvents(eventManagerID).contains(getEvent(eventID))) {
+            // Check if the officers are ticketing officers
+            for (int userID : userIDs) {
+                if (getTicketingOfficer(userID) == null) {
+                    throw new RuntimeException("Error adding officer to event: user is not a ticketing officer");
+                }
+            }
+            for (int userID : userIDs) {
+                String query = "INSERT INTO event_ticket_officers (eventID, ticketOfficerID) VALUES (?, ?)";
                 
                 // Try-with-resources to ensure that resources are freed properly
                 try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
-                    pstmt.setInt(1, eventManagerID);
-                    pstmt.setInt(2, Integer.parseInt(userID));
+                    pstmt.setInt(1, eventID);
+                    pstmt.setInt(2, userID);
 
                     int success = pstmt.executeUpdate();
                     results.put(userID, success > 0);
                 }
-
+                catch (SQLException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e.getMessage());
+                }
             }
-
             return results;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
         }
+        else {
+            throw new RuntimeException("Error adding officer to event: event manager not associated with event");
+        }
+
     }
 
     // Methods for Event Management
 
-    public List<Ticket> getTicketsByEventID(String eventID) {
+    public List<Ticket> getTicketsByEventID(int eventID) {
         // Retrieve a list of tickets associated with the specified event from the database
         List<Ticket> tickets = new ArrayList<Ticket>();
         String query1 = "SELECT * FROM bookings WHERE event_id = ?";
@@ -347,7 +365,7 @@ public class DatabaseService {
 
         // Try-with-resources to ensure that resources are freed properly
         try (PreparedStatement pstmt1 = this.connection.prepareStatement(query1)) {
-            pstmt1.setInt(1, Integer.parseInt(eventID));
+            pstmt1.setInt(1, eventID);
             ResultSet bookings_results = pstmt1.executeQuery();
 
             while (bookings_results.next()) {
@@ -373,39 +391,19 @@ public class DatabaseService {
         }
     }
 
-    public List<Integer> getTicketOfficersByEventID(String eventID){
+    public List<Integer> getTicketOfficersByEventID(int eventID){
         String query = "SELECT * FROM event_ticket_officers WHERE event_id = ?";
         List<Integer> ticketOfficers = new ArrayList<Integer>();
 
         // Try-with-resources to ensure that resources are freed properly
         try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
-            pstmt.setInt(1, Integer.parseInt(eventID));
+            pstmt.setInt(1, eventID);
             ResultSet ticketOfficers_results = pstmt.executeQuery();
 
             while (ticketOfficers_results.next()) {
                 ticketOfficers.add(ticketOfficers_results.getInt("ticketOfficerID"));
             }
             return ticketOfficers;
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
-    public List<Integer> getTicketOptionsByEventID(String eventID){
-        String query = "SELECT * FROM event_ticket_options WHERE event_id = ?";
-        List<Integer> ticketOptions = new ArrayList<Integer>();
-
-        // Try-with-resources to ensure that resources are freed properly
-        try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
-            pstmt.setInt(1, Integer.parseInt(eventID));
-            ResultSet ticketOptions_results = pstmt.executeQuery();
-
-            while (ticketOptions_results.next()) {
-                ticketOptions.add(ticketOptions_results.getInt("ticketOptionID"));
-            }
-            return ticketOptions;
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -425,8 +423,8 @@ public class DatabaseService {
                 Event event = new Event(
                     events_results.getInt("eventID"),
                     getEventManager(events_results.getInt("eventManagerID")),
-                    getTicketOfficersByEventID(events_results.getString("eventID")),
-                    getTicketOptionsByEventID(events_results.getString("eventID")),
+                    getTicketOfficersByEventID(events_results.getInt("eventID")),
+                    getTicketOptionsByEventID(events_results.getInt("eventID")),
                     events_results.getDouble("ticketCancellationFee"),
                     events_results.getDouble("basePrice"),
                     events_results.getString("eventName"),
@@ -434,7 +432,7 @@ public class DatabaseService {
                     events_results.getTimestamp("startTime").toLocalDateTime(),
                     events_results.getInt("duration"),
                     events_results.getTimestamp("endTime").toLocalDateTime(),
-                    getTicketsByEventID(events_results.getString("eventID")),
+                    getTicketsByEventID(events_results.getInt("eventID")),
                     events_results.getInt("numTicketsAvailable")
                 );
                 events.add(event);
@@ -447,7 +445,7 @@ public class DatabaseService {
         }
     }
 
-    public Event getEvent(Integer eventID) {
+    public Event getEvent(int eventID) {
         String query = "SELECT * FROM events WHERE eventID = ?";
 
         try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
@@ -460,8 +458,8 @@ public class DatabaseService {
                 Event event = new Event(
                     events_result.getInt("eventID"),
                     getEventManager(events_result.getInt("eventManagerID")),
-                    getTicketOfficersByEventID(events_result.getString("eventID")),
-                    getTicketOptionsByEventID(events_result.getString("eventID")),
+                    getTicketOfficersByEventID(events_result.getInt("eventID")),
+                    getTicketOptionsByEventID(events_result.getInt("eventID")),
                     events_result.getDouble("ticketCancellationFee"),
                     events_result.getDouble("basePrice"),
                     events_result.getString("eventName"),
@@ -469,7 +467,7 @@ public class DatabaseService {
                     events_result.getTimestamp("startTime").toLocalDateTime(),
                     events_result.getInt("duration"),
                     events_result.getTimestamp("endTime").toLocalDateTime(),
-                    getTicketsByEventID(events_result.getString("eventID")),
+                    getTicketsByEventID(events_result.getInt("eventID")),
                     events_result.getInt("numTicketsAvailable")
                 );
                 return event;
@@ -483,7 +481,7 @@ public class DatabaseService {
 
     }
 
-    public List<Event> getManagedEvents(Integer eventManagerID) {
+    public List<Event> getManagedEvents(int eventManagerID) {
 
         String query = "SELECT * FROM events WHERE eventManagerID = ?";
 
@@ -497,8 +495,8 @@ public class DatabaseService {
                 Event event = new Event(
                     events_results.getInt("eventID"),
                     getEventManager(events_results.getInt("eventManagerID")),
-                    getTicketOfficersByEventID(events_results.getString("eventID")),
-                    getTicketOptionsByEventID(events_results.getString("eventID")),
+                    getTicketOfficersByEventID(events_results.getInt("eventID")),
+                    getTicketOptionsByEventID(events_results.getInt("eventID")),
                     events_results.getDouble("ticketCancellationFee"),
                     events_results.getDouble("basePrice"),
                     events_results.getString("eventName"),
@@ -506,7 +504,7 @@ public class DatabaseService {
                     events_results.getTimestamp("startTime").toLocalDateTime(),
                     events_results.getInt("duration"),
                     events_results.getTimestamp("endTime").toLocalDateTime(),
-                    getTicketsByEventID(events_results.getString("eventID")),
+                    getTicketsByEventID(events_results.getInt("eventID")),
                     events_results.getInt("numTicketsAvailable")
                 );
                 events.add(event);
@@ -560,17 +558,22 @@ public class DatabaseService {
     public Event createEvent(Map<String, Object> details) {
         String query = "INSERT INTO events (eventManagerID, ticketCancellationFee, basePrice, eventName, venue, startTime, duration, endTime, numTicketsAvailable) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
+        // check ticketOptions is formatted correctly
+        if (!(details.get("ticketOptions") instanceof List<?>)) {
+            throw new RuntimeException("Error creating event: ticketOptions not a list");
+        }
+
         // Try-with-resources to ensure that resources are freed properly
         try (PreparedStatement pstmt = this.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setInt(1, (Integer) details.get("eventManagerID"));
+            pstmt.setInt(1, (int) details.get("eventManagerID"));
             pstmt.setFloat(2, (float) details.get("ticketCancellationFee"));
             pstmt.setFloat(3, (float) details.get("basePrice"));
             pstmt.setString(4, (String) details.get("eventName"));
             pstmt.setString(5, (String) details.get("venue"));
             pstmt.setTimestamp(6, java.sql.Timestamp.valueOf((String) details.get("startTime")));
-            pstmt.setInt(7, (Integer) details.get("duration"));
+            pstmt.setInt(7, (int) details.get("duration"));
             pstmt.setTimestamp(8, java.sql.Timestamp.valueOf((String) details.get("endTime")));
-            pstmt.setInt(9, (Integer) details.get("numTicketsAvailable"));
+            pstmt.setInt(9, (int) details.get("numTicketsAvailable"));
 
             int success = pstmt.executeUpdate();
 
@@ -606,40 +609,16 @@ public class DatabaseService {
 
     }
 
-    
-    public Map<String, Boolean> addOfficerToEvent(String eventID, List<String> userIDs) {
-        
-        HashMap<String, Boolean> results = new HashMap<String,Boolean>();
-
-        for (String userID : userIDs) {
-            String query = "INSERT INTO event_ticket_officers (eventID, ticketOfficerID) VALUES (?, ?)";
-            
-            // Try-with-resources to ensure that resources are freed properly
-            try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
-                pstmt.setInt(1, Integer.parseInt(eventID));
-                pstmt.setInt(2, Integer.parseInt(userID));
-
-                int success = pstmt.executeUpdate();
-                results.put(userID, success > 0);
-            }
-            catch (SQLException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e.getMessage());
-            }
-        }
-
-        return results;
-    }
 
     // Methods for Ticket and Booking Operations
 
-    public HashMap<String,Boolean> createTicket(String bookingID, HashMap<String,Integer> ticketMap) {
+    public HashMap<Integer,Boolean> createTicket(int bookingID, HashMap<String,Integer> ticketMap) {
 
-        Integer guest = ticketMap.get("guest");
-        Integer total = ticketMap.get("total");
+        int guest = ticketMap.get("guest");
+        int total = ticketMap.get("total");
 
         // TicketID, success
-        HashMap<String,Boolean> results = new HashMap<String,Boolean>();
+        HashMap<Integer,Boolean> results = new HashMap<Integer,Boolean>();
 
 
         for (int i = 0; i < total; i++) {
@@ -647,7 +626,7 @@ public class DatabaseService {
             
             // Try-with-resources to ensure that resources are freed properly
             try (PreparedStatement pstmt = this.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-                pstmt.setInt(1, Integer.parseInt(bookingID));
+                pstmt.setInt(1, bookingID);
                 pstmt.setBoolean(2, i < guest);
 
                 int success = pstmt.executeUpdate();
@@ -656,13 +635,13 @@ public class DatabaseService {
                     // Retrieve the generated keys
                     try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                         if (generatedKeys.next()) {
-                            results.put(Integer.toString(generatedKeys.getInt(1)), true);
+                            results.put(generatedKeys.getInt(1), true);
                         } else {
-                            results.put(Integer.toString(i), false);
+                            results.put(i, false);
                         }
                     }
                 } else {
-                    results.put(Integer.toString(i), false);
+                    results.put(i, false);
                 }
             }
             catch (SQLException e) {
@@ -675,12 +654,67 @@ public class DatabaseService {
         return results;
     }
 
-    public boolean checkTicketAvailability(String eventID, int quantity) {
+    public Booking getBooking(int bookingID) {
+        // Retrieve a booking from the database based on the booking ID
+        String query = "SELECT * FROM bookings WHERE bookingID = ?";
+
+        try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
+            pstmt.setInt(1, bookingID);
+            ResultSet booking = pstmt.executeQuery();
+
+            if (booking.next()) {
+                return new Booking(
+                    booking.getInt("bookingID"),
+                    getCustomer(booking.getInt("customerID")),
+                    getTicketingOfficer(booking.getInt("ticketOfficerID")),
+                    booking.getInt("eventID"),
+                    getTicketOptionByBookingID(booking.getInt("bookingID")),
+                    getTicketsByBookingID(booking.getInt("bookingID")),
+                    booking.getTimestamp("bookingTime").toLocalDateTime(),
+                    booking.getString("bookingStatus")
+                );
+            }
+            else {
+                throw new RuntimeException("Error getting booking: booking not found");
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public Ticket getTicket(int ticketID) {
+        // Retrieve a ticket from the database based on the ticket ID
+        String query = "SELECT * FROM tickets WHERE ticketID = ?";
+
+        try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
+            pstmt.setInt(1, ticketID);
+            ResultSet ticket = pstmt.executeQuery();
+
+            if (ticket.next()) {
+                return new Ticket(
+                    ticket.getInt("ticketID"),
+                    ticket.getBoolean("isGuest"),
+                    ticket.getBoolean("attended")
+                );
+            }
+            else {
+                throw new RuntimeException("Error getting ticket: ticket not found");
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public boolean checkTicketAvailability(int eventID, int quantity) {
         
         String query = "SELECT * FROM events WHERE eventID = ?";
 
         try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
-            pstmt.setInt(1, Integer.parseInt(eventID));
+            pstmt.setInt(1, eventID);
             ResultSet event = pstmt.executeQuery();
 
             if (event.next()) {
@@ -697,13 +731,13 @@ public class DatabaseService {
 
     }
 
-    public boolean verifyTicket(String ticketID) {
+    public boolean verifyTicket(int ticketID) {
         
         // Check if the specified ticket exist and has not been verified
         String query = "SELECT * FROM tickets WHERE ticketID = ?";
 
         try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
-            pstmt.setInt(1, Integer.parseInt(ticketID));
+            pstmt.setInt(1, ticketID);
             ResultSet ticket = pstmt.executeQuery();
 
             if (ticket.next()) {
@@ -711,7 +745,7 @@ public class DatabaseService {
                 String query2 = "UPDATE tickets SET attended = ? WHERE ticketID = ?";
                 try (PreparedStatement pstmt2 = this.connection.prepareStatement(query2)) {
                     pstmt2.setBoolean(1, true);
-                    pstmt2.setInt(2, Integer.parseInt(ticketID));
+                    pstmt2.setInt(2, ticketID);
 
                     int success = pstmt2.executeUpdate();
 
@@ -733,14 +767,14 @@ public class DatabaseService {
 
     }
 
-    public List<Ticket> getTicketsByBookingID(String bookingID) {
+    public List<Ticket> getTicketsByBookingID(int bookingID) {
         // Retrieve a list of tickets associated with the specified booking from the database
         String query = "SELECT * FROM tickets WHERE bookingID = ?";
         List<Ticket> tickets = new ArrayList<Ticket>();
 
         // Try-with-resources to ensure that resources are freed properly
         try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
-            pstmt.setInt(1, Integer.parseInt(bookingID));
+            pstmt.setInt(1, bookingID);
             ResultSet tickets_results = pstmt.executeQuery();
 
             while (tickets_results.next()) {
@@ -759,15 +793,16 @@ public class DatabaseService {
         }
     }
 
-    public TicketOption getTicketOptionByBookingID(String bookingID) {
+    public TicketOption getTicketOptionByBookingID(int bookingID) {
         String query = "SELECT * FROM ticket_options WHERE bookingID = ?";
 
         try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
-            pstmt.setInt(1, Integer.parseInt(bookingID));
+            pstmt.setInt(1, bookingID);
             ResultSet ticketOption = pstmt.executeQuery();
 
             if (ticketOption.next()) {
                 return new TicketOption(
+                    ticketOption.getInt("ticketOptionID"),
                     ticketOption.getInt("totalAvailable"),
                     ticketOption.getInt("priceMultipler"),
                     ticketOption.getString("name")
@@ -783,8 +818,27 @@ public class DatabaseService {
         }
     }
 
+    public List<Integer> getTicketOptionsByEventID(Integer eventID){
+        String query = "SELECT * FROM event_ticket_options WHERE event_id = ?";
+        List<Integer> ticketOptions = new ArrayList<Integer>();
 
-    public List<Ticket> getTickets(String userID) {
+        // Try-with-resources to ensure that resources are freed properly
+        try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
+            pstmt.setInt(1, eventID);
+            ResultSet ticketOptions_results = pstmt.executeQuery();
+
+            while (ticketOptions_results.next()) {
+                ticketOptions.add(ticketOptions_results.getInt("ticketOptionID"));
+            }
+            return ticketOptions;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public List<Ticket> getTickets(int userID) {
         
         try{
             // Get bookings for the user
@@ -805,24 +859,24 @@ public class DatabaseService {
         }
     }
 
-    public List<Booking> getBookings(String userID) {
+    public List<Booking> getBookings(int userID) {
         
         String query = "SELECT * FROM bookings WHERE customerID = ?";
         List<Booking> bookings = new ArrayList<Booking>();
 
         // Try-with-resources to ensure that resources are freed properly
         try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
-            pstmt.setInt(1, Integer.parseInt(userID));
+            pstmt.setInt(1, userID);
             ResultSet bookings_results = pstmt.executeQuery();
 
             while (bookings_results.next()) {
                 Booking booking = new Booking(
-                    bookings_results.getString("bookingID"),
+                    bookings_results.getInt("bookingID"),
                     getCustomer(bookings_results.getInt("customerID")),
                     getTicketingOfficer(bookings_results.getInt("ticketOfficerID")),
                     bookings_results.getInt("eventID"),
-                    getTicketOptionByBookingID(bookings_results.getString("bookingID")),
-                    getTicketsByBookingID(bookings_results.getString("bookingID")),
+                    getTicketOptionByBookingID(bookings_results.getInt("bookingID")),
+                    getTicketsByBookingID(bookings_results.getInt("bookingID")),
                     bookings_results.getTimestamp("bookingTime").toLocalDateTime(),
                     bookings_results.getString("bookingStatus")
                 );
@@ -837,24 +891,24 @@ public class DatabaseService {
 
     }
 
-    public List<Booking> getBookingsByEvent(String eventID) {
+    public List<Booking> getBookingsByEvent(int eventID) {
         
         String query = "SELECT * FROM bookings WHERE eventID = ?";
         List<Booking> bookings = new ArrayList<Booking>();
 
         // Try-with-resources to ensure that resources are freed properly
         try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
-            pstmt.setInt(1, Integer.parseInt(eventID));
+            pstmt.setInt(1, eventID);
             ResultSet bookings_results = pstmt.executeQuery();
 
             while (bookings_results.next()) {
                 Booking booking = new Booking(
-                    bookings_results.getString("bookingID"),
+                    bookings_results.getInt("bookingID"),
                     getCustomer(bookings_results.getInt("customerID")),
                     getTicketingOfficer(bookings_results.getInt("ticketOfficerID")),
                     bookings_results.getInt("eventID"),
-                    getTicketOptionByBookingID(bookings_results.getString("bookingID")),
-                    getTicketsByBookingID(bookings_results.getString("bookingID")),
+                    getTicketOptionByBookingID(bookings_results.getInt("bookingID")),
+                    getTicketsByBookingID(bookings_results.getInt("bookingID")),
                     bookings_results.getTimestamp("bookingTime").toLocalDateTime(),
                     bookings_results.getString("bookingStatus")
                 );
@@ -868,28 +922,245 @@ public class DatabaseService {
         }
 
     }
-    // ========================================================================================================
-    // TODO - Implement the following methods
+    
+    public TicketOption createTicketOption(int eventID, String name, int totalAvailable, int priceMultiplier) {
+        String query = "INSERT INTO ticket_options (eventID, name, totalAvailable, priceMultiplier) VALUES (?, ?, ?, ?)";
 
-    public Booking createBooking(String userID, String eventID, int quantity) {
-        // Create a booking for the specified user and event in the database
-        return null;
+        // Try-with-resources to ensure that resources are freed properly
+        try (PreparedStatement pstmt = this.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setInt(1, eventID);
+            pstmt.setString(2, name);
+            pstmt.setInt(3, totalAvailable);
+            pstmt.setInt(4, priceMultiplier);
+
+            int success = pstmt.executeUpdate();
+
+            if (success > 0) {
+                // Retrieve the generated keys
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return new TicketOption(
+                            generatedKeys.getInt(1),
+                            totalAvailable,
+                            priceMultiplier,
+                            name
+                        );
+                    } else {
+                        throw new SQLException("Creating ticket option failed, no ticket option ID obtained.");
+                    }
+                }
+            } else {
+                throw new SQLException("Creating ticket option failed, no rows affected.");
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
-    public Booking createBookingFor(String ticketOfficerID, String userID, String eventID, int quantity) {
-        // Create a booking on behalf of a ticket officer for the specified user and event in the database
-        return null;
+    public Booking createBooking(int userID, int eventID, TicketOption ticketOption, int quantity, HashMap<String, Integer> ticketMap) {
+        
+        // CREATE TABLE IF NOT EXISTS Booking (
+        //     bookingID INT PRIMARY KEY AUTO_INCREMENT,
+        //     eventID INT NOT NULL,
+        //     ticketOptionID INT NOT NULL,
+        //     customerID INT NOT NULL,
+        //     ticketOfficerID INT,
+        //     status enum('pending', 'confirmed', 'cancelled') NOT NULL,
+        //     bookedTime DATETIME NOT NULL,
+        //     FOREIGN KEY (eventID) REFERENCES Event(eventID),
+        //     FOREIGN KEY (ticketOptionID) REFERENCES TicketOption(ticketOptionID),
+        //     FOREIGN KEY (customerID) REFERENCES Customer(userID),
+        //     FOREIGN KEY (ticketOfficerID) REFERENCES TicketOfficer(userID)
+        // );
+        
+        String query = "INSERT INTO bookings (eventID, ticketOptionID, customerID, status, bookedTime) VALUES (?, ?, ?, ?, ?)";
+
+        // Try-with-resources to ensure that resources are freed properly
+        // Check if the ticket option is available
+        if (checkTicketAvailability(eventID, quantity)) {
+            // Create the booking
+            try (PreparedStatement pstmt = this.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setInt(1, eventID);
+                pstmt.setInt(2, ticketOption.getTicketOptionID());
+                pstmt.setInt(3, userID);
+                pstmt.setString(4, "pending");
+                pstmt.setTimestamp(5, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+
+                int success = pstmt.executeUpdate();
+
+                if (success > 0) {
+                    // Retrieve the generated keys
+                    try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            int bookingID = generatedKeys.getInt(1);
+                            // Create the tickets
+                            HashMap<Integer,Boolean> ticketResults = createTicket(bookingID, ticketMap);
+                            List<Ticket> tickets = new ArrayList<Ticket>();
+                            for (int ticketID : ticketResults.keySet()) {
+                                tickets.add(new Ticket(
+                                    ticketID,
+                                    getTicket(ticketID).getIsGuest(),
+                                    false
+                                ));
+                            }
+                            return new Booking(
+                                bookingID,
+                                getCustomer(userID),
+                                null,
+                                eventID,
+                                ticketOption,
+                                tickets,
+                                java.time.LocalDateTime.now(),
+                                "pending"
+                            );
+                        } else {
+                            throw new SQLException("Creating booking failed, no booking ID obtained.");
+                        }
+                    }
+                } else {
+                    throw new SQLException("Creating booking failed, no rows affected.");
+                }
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+        else {
+            throw new RuntimeException("Error creating booking: ticket option not available");
+        }
     }
 
-    public boolean cancelBooking(String bookingID) {
-        // Cancel a booking in the database
-        return false;
+    public Booking createBookingFor(int ticketOfficerID, int userID, int eventID, TicketOption ticketOption, int quantity, HashMap<String, Integer> ticketMap) {
+        String query = "INSERT INTO bookings (eventID, ticketOptionID, customerID, ticketOfficerID, status, bookedTime) VALUES (?, ?, ?, ?, ?, ?)";
+        
+        // Try-with-resources to ensure that resources are freed properly
+        // Check if the ticket option is available
+        if (checkTicketAvailability(eventID, quantity)) {
+            // Create the booking
+            try (PreparedStatement pstmt = this.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setInt(1, eventID);
+                pstmt.setInt(2, ticketOption.getTicketOptionID());
+                pstmt.setInt(3, userID);
+                pstmt.setInt(4, ticketOfficerID);
+                pstmt.setString(5, "pending");
+                pstmt.setTimestamp(6, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+
+                int success = pstmt.executeUpdate();
+
+                if (success > 0) {
+                    // Retrieve the generated keys
+                    try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            int bookingID = generatedKeys.getInt(1);
+                            // Create the tickets
+                            HashMap<Integer,Boolean> ticketResults = createTicket(bookingID, ticketMap);
+                            List<Ticket> tickets = new ArrayList<Ticket>();
+                            for (int ticketID : ticketResults.keySet()) {
+                                tickets.add(new Ticket(
+                                    ticketID,
+                                    getTicket(ticketID).getIsGuest(),
+                                    false
+                                ));
+                            }
+                            return new Booking(
+                                bookingID,
+                                getCustomer(userID),
+                                getTicketingOfficer(ticketOfficerID),
+                                eventID,
+                                ticketOption,
+                                tickets,
+                                java.time.LocalDateTime.now(),
+                                "pending"
+                            );
+                        } else {
+                            throw new SQLException("Creating booking failed, no booking ID obtained.");
+                        }
+                    }
+                } else {
+                    throw new SQLException("Creating booking failed, no rows affected.");
+                }
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+        else {
+            throw new RuntimeException("Error creating booking: ticket option not available");
+        }
+
+    }
+
+    public boolean cancelBooking(int bookingID, int userID) {
+        String query = "UPDATE bookings SET status = ? WHERE bookingID = ? AND customerID = ?";
+
+        // Try-with-resources to ensure that resources are freed properly
+        try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
+            pstmt.setString(1, "cancelled");
+            pstmt.setInt(2, bookingID);
+            pstmt.setInt(3, userID);
+
+            int success = pstmt.executeUpdate();
+
+            return success > 0;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
+
+
     }
 
     // Method for Refund Creation
 
-    public Refund createRefund(String bookingID) {
-        // Create a refund for the specified booking in the database
-        return null;
+    public Refund createRefund(int bookingID, int userID) {
+        String query = "INSERT INTO refunds (bookingID, customerID, refundTime) VALUES (?, ?, ?)";
+        Event event = getEvent(getBooking(bookingID).getEventID());
+        double cancelationFee = event.getTicketCancellationFee();
+        double multiplier = (double) getBooking(bookingID).getTicketOption().getPriceMultiplier();
+        int numberOfTickets = getBooking(bookingID).getTickets().size();
+
+        // Calculate the refund amount
+        double refundAmount = (multiplier * event.getBasePrice() * numberOfTickets) - cancelationFee;
+
+        // Set refund date as current date
+        LocalDateTime refundDate = java.time.LocalDateTime.now();
+
+        // Try-with-resources to ensure that resources are freed properly
+        try (PreparedStatement pstmt = this.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setInt(1, bookingID);
+            pstmt.setInt(2, userID);
+            pstmt.setTimestamp(3, java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+
+            int success = pstmt.executeUpdate();
+
+            if (success > 0) {
+                // Retrieve the generated keys
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int refundID = generatedKeys.getInt(1);
+                        return new Refund(
+                            refundID,
+                            getBooking(bookingID).getBookingId(),
+                            refundAmount,
+                            refundDate,
+                            "pending"
+                        );
+                    } else {
+                        throw new SQLException("Creating refund failed, no refund ID obtained.");
+                    }
+                }
+            } else {
+                throw new SQLException("Creating refund failed, no rows affected.");
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }
