@@ -4,10 +4,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import user.*;
+import user.Customer;
+import user.TicketingOfficer;
+import user.User;
 
 public class Booking {
-    private String bookingID;
+    private int bookingID;
     private Customer customer;
     private TicketingOfficer ticketOfficer;
     private int eventID;
@@ -16,15 +18,7 @@ public class Booking {
     private LocalDateTime bookingTime;
     private String bookingStatus;
 
-    public Booking(
-        String bookingID, 
-        Customer customer, 
-        TicketingOfficer ticketOfficer, 
-        int eventID, 
-        TicketOption ticketOption, 
-        List<Ticket> tickets, 
-        LocalDateTime bookingTime, 
-        String bookingStatus) {
+    public Booking(int bookingID, Customer customer, TicketingOfficer ticketOfficer, int eventID, TicketOption ticketOption, List<Ticket> tickets, LocalDateTime bookingTime, String bookingStatus) {
         this.bookingID = bookingID;
         this.customer = customer;
         this.ticketOfficer = ticketOfficer;
@@ -36,7 +30,7 @@ public class Booking {
     }
 
     // Getters
-    public String getBookingId() {
+    public int getBookingId() {
         return bookingID;
     }
 
