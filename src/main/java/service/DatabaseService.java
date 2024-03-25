@@ -39,6 +39,7 @@ public class DatabaseService {
         this.connect();
     }
 
+
     // Method to establish a database connection
     public void connect() throws SQLException {
         String url = "jdbc:mysql://" + this.host + "/" + this.name;
@@ -207,6 +208,39 @@ public class DatabaseService {
         }
     }
 
+    public Customer getCustomer(String email, String password){
+        User user = getUser(email, password);
+        if (user instanceof Customer) {
+            return (Customer) user;
+        }
+        else {
+            throw new RuntimeException("Error getting customer: user is not a customer");
+        }
+    }
+
+    public EventManager getEventManager(String email, String password){
+        User user = getUser(email, password);
+        if (user instanceof EventManager) {
+            return (EventManager) user;
+        }
+        else {
+            throw new RuntimeException("Error getting event manager: user is not an event manager");
+        }
+    }
+
+    public TicketingOfficer getTicketingOfficer(String email, String password){
+        if (getUser(email, password) == null){
+            return null;
+        }
+        User user = getUser(email, password);
+        if (user instanceof TicketingOfficer) {
+            return (TicketingOfficer) user;
+        }
+        else {
+            throw new RuntimeException("Error getting ticketing officer: user is not a ticketing officer");
+        }
+    }
+
     private User getUser(int userID){
 
         if (userID == 0){
@@ -284,7 +318,7 @@ public class DatabaseService {
         }
     }
 
-    public Customer getCustomer(int userID){
+    private Customer getCustomer(int userID){
         User user = getUser(userID);
         if (user instanceof Customer) {
             return (Customer) user;
@@ -294,7 +328,7 @@ public class DatabaseService {
         }
     }
 
-    public EventManager getEventManager(int userID){
+    private EventManager getEventManager(int userID){
         User user = getUser(userID);
         if (user instanceof EventManager) {
             return (EventManager) user;
@@ -304,7 +338,7 @@ public class DatabaseService {
         }
     }
 
-    public TicketingOfficer getTicketingOfficer(int userID){
+    private TicketingOfficer getTicketingOfficer(int userID){
         if (getUser(userID) == null){
             return null;
         }
@@ -317,7 +351,7 @@ public class DatabaseService {
         }
     }
 
-    public Map<Integer, Boolean> addOfficerToEvent(int eventManagerID, int eventID, List<Integer> userIDs) {
+    private Map<Integer, Boolean> addOfficerToEvent(int eventManagerID, int eventID, List<Integer> userIDs) {
         // Implement logic to associate officers with an event managed by the specified event manager
         // Return a map indicating the success or failure of adding each officer
 
@@ -353,6 +387,45 @@ public class DatabaseService {
             throw new RuntimeException("Error adding officer to event: event manager not associated with event");
         }
 
+    }
+
+    public Map<Integer, Boolean> addOfficerToEvent(String email, String password ,int eventID, List<Integer> userIDs) {
+        // Implement logic to associate officers with an event managed by the specified event manager
+        // Return a map indicating the success or failure of adding each officer
+
+        HashMap<Integer, Boolean> results = new HashMap<Integer,Boolean>();
+
+        EventManager eventManager = getEventManager(email, password);
+
+        // Check if the event manager is associated with the event
+        if (getManagedEvents(eventManager.getId()).contains(getEvent(eventID))) {
+            // Check if the officers are ticketing officers
+            for (int userID : userIDs) {
+                if (getTicketingOfficer(userID) == null) {
+                    throw new RuntimeException("Error adding officer to event: user is not a ticketing officer");
+                }
+            }
+            for (int userID : userIDs) {
+                String query = "INSERT INTO event_ticket_officers (eventID, ticketOfficerID) VALUES (?, ?)";
+                
+                // Try-with-resources to ensure that resources are freed properly
+                try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
+                    pstmt.setInt(1, eventID);
+                    pstmt.setInt(2, userID);
+
+                    int success = pstmt.executeUpdate();
+                    results.put(userID, success > 0);
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e.getMessage());
+                }
+            }
+            return results;
+        }
+        else {
+            throw new RuntimeException("Error adding officer to event: event manager not associated with event");
+        }
     }
 
     // Methods for Event Management
@@ -556,12 +629,36 @@ public class DatabaseService {
     }
 
     public Event createEvent(Map<String, Object> details) {
+
+        // details keys,value pairs
+        // int eventID,
+        // EventManager eventManager,
+        // List<Integer> ticketOfficerIDs,
+        // List<Integer> ticketOptionIDs,
+        // double ticketCancellationFee,
+        // double basePrice,
+        // String eventName,
+        // String venue,
+        // LocalDateTime startTime,
+        // int duration,
+        // LocalDateTime endTime,
+        // List<Ticket> attendance,
+        // int numTicketsAvailable
+        
+
+
         String query = "INSERT INTO events (eventManagerID, ticketCancellationFee, basePrice, eventName, venue, startTime, duration, endTime, numTicketsAvailable) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         // check ticketOptions is formatted correctly
         if (!(details.get("ticketOptions") instanceof List<?>)) {
             throw new RuntimeException("Error creating event: ticketOptions not a list");
         }
+
+        // Check if id belongs to an event manager
+        if (getEventManager((int) details.get("eventManagerID")) == null) {
+            throw new RuntimeException("Error creating event: event manager not found");
+        }
+        
 
         // Try-with-resources to ensure that resources are freed properly
         try (PreparedStatement pstmt = this.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -608,7 +705,6 @@ public class DatabaseService {
         }
 
     }
-
 
     // Methods for Ticket and Booking Operations
 
@@ -923,7 +1019,7 @@ public class DatabaseService {
 
     }
     
-    public TicketOption createTicketOption(int eventID, String name, int totalAvailable, int priceMultiplier) {
+    public TicketOption createTicketOption(int eventID, String name, int totalAvailable, double priceMultiplier) {
         String query = "INSERT INTO ticket_options (eventID, name, totalAvailable, priceMultiplier) VALUES (?, ?, ?, ?)";
 
         // Try-with-resources to ensure that resources are freed properly
@@ -931,7 +1027,7 @@ public class DatabaseService {
             pstmt.setInt(1, eventID);
             pstmt.setString(2, name);
             pstmt.setInt(3, totalAvailable);
-            pstmt.setInt(4, priceMultiplier);
+            pstmt.setDouble(4, priceMultiplier);
 
             int success = pstmt.executeUpdate();
 
@@ -959,7 +1055,7 @@ public class DatabaseService {
         }
     }
 
-    public Booking createBooking(int userID, int eventID, TicketOption ticketOption, int quantity, HashMap<String, Integer> ticketMap) {
+    public Booking createBooking(int userID, int eventID, TicketOption ticketOption, HashMap<String, Integer> ticketMap) {
         
         // CREATE TABLE IF NOT EXISTS Booking (
         //     bookingID INT PRIMARY KEY AUTO_INCREMENT,
@@ -976,6 +1072,8 @@ public class DatabaseService {
         // );
         
         String query = "INSERT INTO bookings (eventID, ticketOptionID, customerID, status, bookedTime) VALUES (?, ?, ?, ?, ?)";
+        
+        int quantity = ticketMap.get("total");
 
         // Try-with-resources to ensure that resources are freed properly
         // Check if the ticket option is available
@@ -1033,11 +1131,14 @@ public class DatabaseService {
         }
     }
 
-    public Booking createBookingFor(int ticketOfficerID, int userID, int eventID, TicketOption ticketOption, int quantity, HashMap<String, Integer> ticketMap) {
+    public Booking createBookingFor(int ticketOfficerID, int userID, int eventID, TicketOption ticketOption, HashMap<String, Integer> ticketMap) {
         String query = "INSERT INTO bookings (eventID, ticketOptionID, customerID, ticketOfficerID, status, bookedTime) VALUES (?, ?, ?, ?, ?, ?)";
         
         // Try-with-resources to ensure that resources are freed properly
         // Check if the ticket option is available
+
+        int quantity = ticketMap.get("total");
+
         if (checkTicketAvailability(eventID, quantity)) {
             // Create the booking
             try (PreparedStatement pstmt = this.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {

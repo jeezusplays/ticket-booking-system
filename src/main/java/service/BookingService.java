@@ -1,13 +1,10 @@
 package service;
 
-import user.User;
-import user.TicketingOfficer;
-import user.EventManager;
+import user.*;
 
-import data.Booking;
-import data.Event;
-import data.Refund;
+import data.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class BookingService {
@@ -21,30 +18,31 @@ public class BookingService {
 
     // Get all bookings for a user method
     public List<Booking> getBookings(User user) {
-        return databaseService.getBookings(user);
+        return databaseService.getBookings(user.getId());
     }
 
     // Get all bookings for an event method
     public List<Booking> getBookingsByEvent(Event event) {
-        return databaseService.getBookingsByEvent(event);
+        return databaseService.getBookingsByEvent(event.getEventID());
     }
 
     // Create a new booking for a user method
-    public Booking createBooking(User user, int numTickets, String eventID, int numGuests) {
-        return databaseService.createBooking(user, numTickets, eventID, numGuests);
+    public Booking createBooking(User user, int eventID, TicketOption option, HashMap<String, Integer> numTickets) {
+        
+        return databaseService.createBooking(user.getId(), eventID, option, numTickets);
     }
 
     // Create a new booking for a user by a ticket officer method
-    public Booking createBookingFor(TicketingOfficer ticketOfficer, int numTickets, String eventID, int numGuests, String userID) {
-        return databaseService.createBookingFor(ticketOfficer, numTickets, eventID, numGuests, userID);
+    public Booking createBookingFor(TicketingOfficer ticketOfficer, int eventID, int userID, TicketOption option, HashMap<String, Integer> numTickets) {
+        return databaseService.createBookingFor(ticketOfficer.getId(), userID, eventID, option, numTickets);
     }
 
     // Cancel a booking for a user and process refund method
-    public Refund cancelBooking(User user, String bookingID) {
+    public Refund cancelBooking(Customer customer, int bookingID) {
         // Get the booking associated with the provided ID
-        Booking booking = databaseService.getBookingByID(bookingID);
+        Booking booking = databaseService.getBooking(bookingID);
 
-        if (booking != null && booking.getUser().equals(user)) {
+        if (booking != null && booking.getCustomer().equals(customer)) {
             // Process refund and return the Refund object
             return refundService.processRefund(bookingID);
         } else {
@@ -57,7 +55,7 @@ public class BookingService {
         // Check if the event manager has the necessary permissions
         if (eventManagerCanManageEvent(eventManager, event)) {
             // Get all bookings for the event
-            List<Booking> bookings = databaseService.getBookingsByEvent(event);
+            List<Booking> bookings = databaseService.getBookingsByEvent(event.getEventID());
 
             // Process refunds for each booking and return the list of Refund objects
             return refundService.processRefund(bookings);
@@ -70,6 +68,6 @@ public class BookingService {
     private boolean eventManagerCanManageEvent(EventManager eventManager, Event event) {
         // Implementation logic to check if the EventManager has the necessary permissions
         // You may customize this based on your application's requirements
-        return event.getManager().equals(eventManager);
+        return event.geteventManager().equals(eventManager);
     }
 }
