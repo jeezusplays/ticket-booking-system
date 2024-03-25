@@ -959,7 +959,7 @@ public class DatabaseService {
         }
     }
 
-    public Booking createBooking(int userID, int eventID, TicketOption ticketOption, int quantity, HashMap<String, Integer> ticketMap) {
+    public Booking createBooking(int userID, int eventID, TicketOption ticketOption, HashMap<String, Integer> ticketMap) {
         
         // CREATE TABLE IF NOT EXISTS Booking (
         //     bookingID INT PRIMARY KEY AUTO_INCREMENT,
@@ -976,6 +976,8 @@ public class DatabaseService {
         // );
         
         String query = "INSERT INTO bookings (eventID, ticketOptionID, customerID, status, bookedTime) VALUES (?, ?, ?, ?, ?)";
+        
+        int quantity = ticketMap.get("total");
 
         // Try-with-resources to ensure that resources are freed properly
         // Check if the ticket option is available
@@ -1033,11 +1035,14 @@ public class DatabaseService {
         }
     }
 
-    public Booking createBookingFor(int ticketOfficerID, int userID, int eventID, TicketOption ticketOption, int quantity, HashMap<String, Integer> ticketMap) {
+    public Booking createBookingFor(int ticketOfficerID, int userID, int eventID, TicketOption ticketOption, HashMap<String, Integer> ticketMap) {
         String query = "INSERT INTO bookings (eventID, ticketOptionID, customerID, ticketOfficerID, status, bookedTime) VALUES (?, ?, ?, ?, ?, ?)";
         
         // Try-with-resources to ensure that resources are freed properly
         // Check if the ticket option is available
+
+        int quantity = ticketMap.get("total");
+
         if (checkTicketAvailability(eventID, quantity)) {
             // Create the booking
             try (PreparedStatement pstmt = this.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
