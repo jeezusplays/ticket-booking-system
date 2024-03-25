@@ -9,7 +9,7 @@
     <img src="logo/logo.png" alt="Logo" width="100" height="100">
   </a>
 
-<h3 align="center">Ticket Booking System</h3>
+<h3 align="center">Ticks - Ticket Booking System</h3>
 
   <p align="center">
     Manage booking of tickets for music concerts and events!
@@ -27,14 +27,7 @@
 
 
 ## About The Project
-Ticket booking system that manages the booking of tickets for various events, such as music concerts, theatre shows,
-and seminars.
-
-## Built With
-### Major Frameworks / Libraries 
-
-### APIs 
-
+Ticks manages the booking of tickets for various events, such as music concerts, theatre shows, and seminars. The system allows users to view available events, book tickets, and view their booking history. The system also allows event organizers to add new events, view event details, and view the list of attendees for their events.
 
 ## Getting Started
 ### Prerequisites
@@ -54,11 +47,9 @@ To set up the database needed for the ticket booking system, follow these steps:
 
 Run the `DatabaseInitializer.java` class to create the necessary tables in your MySQL database.
   - In your IDE, run these Maven commands in the terminal in sequence.
-    - Compile the Project: 
-      - mvn clean compile
-    - Initialize the Database: 
-      - mvn exec:java -Dexec.mainClass=com.myapp.DatabaseInitializer
-  This will execute the SQL script to create the database tables.
+    - Compile the Project: `mvn clean compile`
+    - Initialize the Database: `mvn exec:java -Dexec.mainClass=com.myapp.DatabaseInitializer`
+      - This will execute the SQL script to create the database tables.
 
 ### Installation
 1. Clone the repo
@@ -105,18 +96,6 @@ Feel free to contact and connect!
 || Name | Main Role | Github | LinkedIn |
 |-----------| ----------- | ----------- | ----------- | ----------- |
 |<img src="https://avatars.githubusercontent.com/u/68149788?v=4" width="100"></img>|Tan Zuyi Joey|Project Manager|[![jeezusplays](https://img.shields.io/badge/GitHub-181717.svg?style=for-the-badge&logo=GitHub&logoColor=white)](https://github.com/jeezusplays)|[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2.svg?style=for-the-badge&logo=LinkedIn&logoColor=white)](https://linkedin.com/in/joey-tan-zuyi)|
-
-## Acknowledgements
-<!-- _Use this space to list resources you find helpful and would like to give credit to._
-
-Examples:
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
-* [Img Shields](https://shields.io)
-* [Font Awesome](https://fontawesome.com)
-* [Github Profile Badges](https://home.aveek.io/GitHub-Profile-Badges/) -->
 
 
 [forks-shield]: https://img.shields.io/github/forks/jeezusplays/ticket-booking-system.svg?style=for-the-badge
