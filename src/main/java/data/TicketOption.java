@@ -4,21 +4,27 @@ package data;
 // import java.util.Map;
 
 public class TicketOption {
+    private int ticketOptionID;
     private int totalAvailable;
     private int priceMultipler;
     private String name;
 
-    public TicketOption(int totalAvailable, int priceMultipler, String name) {
+    public TicketOption(int ticketOptionID, int totalAvailable, int priceMultipler, String name) {
+        this.ticketOptionID = ticketOptionID;
         this.totalAvailable = totalAvailable;
         this.priceMultipler = priceMultipler;
         this.name = name;
+    }
+
+    public int getTicketOptionID() {
+        return ticketOptionID;
     }
 
     public int getTotalAvailable() {
         return totalAvailable;
     }
 
-    public int getPriceMultipler() {
+    public int getPriceMultiplier() {
         return priceMultipler;
     }
 
