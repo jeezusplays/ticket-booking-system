@@ -3,8 +3,7 @@ package data;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import user.EventManager;
-import user.TicketingOfficer;
+import user.*;
 
 public class Event {
     private int eventID;
@@ -55,7 +54,7 @@ public class Event {
         return eventID;
     }
 
-    public EventManager geteventManager() {
+    public EventManager getEventManager() {
         return eventManager;
     }
 

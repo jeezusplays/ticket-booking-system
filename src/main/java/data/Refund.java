@@ -19,11 +19,11 @@ public class Refund {
     }
 
     // Getters
-    public int getrefundID() {
+    public int getRefundID() {
         return refundID;
     }
 
-    public int getbookingID() {
+    public int getBookingID() {
         return bookingID;
     }
 

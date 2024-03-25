@@ -17,15 +17,15 @@ public class Ticket {
     }
 
     // Getters
-    public Integer getticketID() {
+    public Integer getTicketID() {
         return ticketID;
     }
 
-    // public String geteventID() {
+    // public String getEventID() {
     //     return eventID;
     // }
 
-    // public String getcustomerID() {
+    // public String getCustomerID() {
     //     return customerID;
     // }
 

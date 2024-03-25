@@ -4,9 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import user.Customer;
-import user.TicketingOfficer;
-import user.User;
+import user.*;
 
 public class Booking {
     private int bookingID;
@@ -30,7 +28,7 @@ public class Booking {
     }
 
     // Getters
-    public int getBookingId() {
+    public int getBookingID() {
         return bookingID;
     }
 
@@ -38,7 +36,7 @@ public class Booking {
         return customer;
     }
 
-    public User getTicketOfficerId() {
+    public User getTicketOfficerID() {
         return ticketOfficer;
     }
 
