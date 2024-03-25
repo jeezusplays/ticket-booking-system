@@ -6,10 +6,10 @@ package data;
 public class TicketOption {
     private int ticketOptionID;
     private int totalAvailable;
-    private int priceMultipler;
+    private double priceMultipler;
     private String name;
 
-    public TicketOption(int ticketOptionID, int totalAvailable, int priceMultipler, String name) {
+    public TicketOption(int ticketOptionID, int totalAvailable, double priceMultipler, String name) {
         this.ticketOptionID = ticketOptionID;
         this.totalAvailable = totalAvailable;
         this.priceMultipler = priceMultipler;
@@ -24,7 +24,7 @@ public class TicketOption {
         return totalAvailable;
     }
 
-    public int getPriceMultiplier() {
+    public double getPriceMultiplier() {
         return priceMultipler;
     }
 
