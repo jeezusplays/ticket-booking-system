@@ -46,7 +46,6 @@ public class MainMenuController {
     @FXML
     private TextField searchField; // This is the new TextField member for the search field
 
-
     @FXML
     void handleSearchAction(ActionEvent event) {
         String searchQuery = searchField.getText().toLowerCase();

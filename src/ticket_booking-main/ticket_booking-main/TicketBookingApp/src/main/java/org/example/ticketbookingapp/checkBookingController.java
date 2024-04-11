@@ -238,4 +238,21 @@ public class checkBookingController {
             // Handle the exception, maybe show an error dialog
         }
     }
+
+    @FXML
+    private void handleCheckBooking(MouseEvent event) {
+        try {
+            // Load MainMenu.fxml
+            Parent checkBooking = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("checkBooking.fxml")));
+            Scene scene = new Scene(checkBooking);
+
+            // Get the current stage from the event source
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle the exception, maybe show an error dialog
+        }
+    }
 }

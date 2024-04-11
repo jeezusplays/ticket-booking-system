@@ -4,9 +4,7 @@ import data.Event;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import service.AccountService;
 import service.DatabaseService;
@@ -17,12 +15,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.scene.control.Label;
+
 import javafx.scene.layout.VBox;
 import javafx.scene.control.TextField;
 
@@ -51,8 +48,6 @@ public class CreateEventDialogController {
     @FXML
     private TextField durationField;
     @FXML
-    private TextField revenueField;
-    @FXML
     private TextField cancellationFeeField;
     @FXML
     private ComboBox<Integer> NumOfCatField;
@@ -71,7 +66,6 @@ public class CreateEventDialogController {
         basePriceField.clear();
         venueField.clear();
         durationField.clear();
-        revenueField.clear();
         cancellationFeeField.clear();
 
         // Reset the date picker
@@ -129,8 +123,15 @@ public class CreateEventDialogController {
 
     private void setupCategoryFieldListener() {
         NumOfCatField.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            updateCategoryInputs(newVal);
+            if (newVal != null) {
+                updateCategoryInputs(newVal);
+            } else {
+                // newVal is null, so clear the category inputs or handle it appropriately
+                categoryInputsContainer.getChildren().clear();
+                categorySeatsFields.clear();
+            }
         });
+
     }
 
     private void updateCategoryInputs(int numberOfCategories) {
@@ -166,8 +167,81 @@ public class CreateEventDialogController {
         }
     }
 
+    private boolean validateInput() {
+        boolean isValid = true;
+        StringBuilder errorMessage = new StringBuilder();
+
+        if (eventNameField.getText().isEmpty()) {
+            errorMessage.append("Event name is required.\n");
+            isValid = false;
+        }
+        if (eventDescField.getText().isEmpty()) {
+            errorMessage.append("Event description is required.\n");
+            isValid = false;
+        }
+        try {
+            double basePrice = Double.parseDouble(basePriceField.getText());
+            if (basePrice < 0) {
+                errorMessage.append("Base price must be a positive number.\n");
+                isValid = false;
+            }
+        } catch (NumberFormatException e) {
+            errorMessage.append("Invalid format for base price.\n");
+            isValid = false;
+        }
+
+        if (venueField.getText().isEmpty()) {
+            errorMessage.append("Venue is required.\n");
+            isValid = false;
+        }
+        if (dateField.getValue() == null) {
+            errorMessage.append("Event date is required.\n");
+            isValid = false;
+        }
+        try {
+            int duration = Integer.parseInt(durationField.getText());
+            if (duration <= 0) {
+                errorMessage.append("Duration must be a positive integer.\n");
+                isValid = false;
+            }
+        } catch (NumberFormatException e) {
+            errorMessage.append("Invalid format for duration.\n");
+            isValid = false;
+        }
+
+        try {
+            double cancellationFee = Double.parseDouble(cancellationFeeField.getText());
+            if (cancellationFee < 0) {
+                errorMessage.append("Cancellation fee must be a positive number.\n");
+                isValid = false;
+            }
+        } catch (NumberFormatException e) {
+            errorMessage.append("Invalid format for cancellation fee.\n");
+            isValid = false;
+        }
+
+        if (!isValid) {
+            showAlert("Validation Error", errorMessage.toString(), Alert.AlertType.INFORMATION);
+        }
+
+        return isValid;
+    }
+
+    private void showAlert(String title, String header, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(header);
+        alert.showAndWait();
+    }
+
+
     @FXML
     private void handleCreateEventAction(ActionEvent event) throws SQLException {
+        if (!validateInput()) {
+            return; // Stop the event creation if validation fails
+        }
+
         Map<String, Object> details = new HashMap<>();
         // Collect other event details
         details.put("eventName", eventNameField.getText());
@@ -176,7 +250,7 @@ public class CreateEventDialogController {
         details.put("venue", venueField.getText());
         details.put("date", getCombinedDateTime());
         details.put("duration", Integer.parseInt(durationField.getText()));
-        details.put("revenue", Double.parseDouble(revenueField.getText()));
+        details.put("revenue", Double.parseDouble("0"));
         // details.put("totalSlots", Integer.parseInt(totalSlotsField.getText()));
         details.put("cancellationFee", Double.parseDouble(cancellationFeeField.getText()));
 
@@ -199,13 +273,12 @@ public class CreateEventDialogController {
         // Now pass this details map to the EventService
         Event createdEvent = eventService.createEvent(details);
         if (createdEvent != null) {
+            showAlert("Success", "Event created successfully: " + createdEvent.getEventName(), Alert.AlertType.INFORMATION);
             resetFormFields();
-            System.out.println("Event created successfully: " + createdEvent);
         } else {
-            System.out.println("Failed to create event.");
+            showAlert("Error", "Failed to create event.", Alert.AlertType.ERROR);
         }
     }
-
 
     private String getCombinedDateTime() {
         LocalDate datePart = dateField.getValue();

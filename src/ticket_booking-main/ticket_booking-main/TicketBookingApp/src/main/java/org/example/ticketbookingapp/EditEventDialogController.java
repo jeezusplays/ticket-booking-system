@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -165,6 +166,7 @@ public class EditEventDialogController {
             if (adminController != null) {
                 adminController.refreshEventsTable();
             }
+            showAlert(Alert.AlertType.INFORMATION, "Success", "The event was updated successfully.");
             refreshEventsTable();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.close();
@@ -179,6 +181,15 @@ public class EditEventDialogController {
             System.out.println("Error updating event: " + ex.getMessage());
             // Handle other exceptions, possibly showing a user-friendly message
         }
+    }
+
+
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     public void setAdminController(AdminController adminController) {

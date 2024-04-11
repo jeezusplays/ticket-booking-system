@@ -35,21 +35,14 @@ public class AdminController {
 
     @FXML
     private TableView<Event> eventsTable;
-    @FXML
-    private TableColumn<Event, Integer> eventIdColumn;  // Assuming you have this
 
     @FXML
     private TableColumn<Event, Void> actionsColumn;
-
-    private boolean editing = false;
-    private Map<TableColumn<Event, ?>, TableCell<Event, ?>> editors = new HashMap<>();
 
     @FXML
     private ComboBox<Event> authorisedEvents;
     @FXML
     private ComboBox<TicketingOfficer> authorisedTO;
-    @FXML
-    private Button addAuthorisedTObutton;
 
     public AdminController() {
         try {
@@ -142,16 +135,6 @@ public class AdminController {
         }
     }
 
-
-    public int getCurrentUserID() {
-        User currentUser = AccountService.getCurrentUser();
-        if (currentUser != null) {
-            return currentUser.getID();
-        } else {
-            throw new IllegalStateException("No user is currently logged in.");
-        }
-    }
-
     private void showAlert(String title, String header, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -159,9 +142,6 @@ public class AdminController {
         alert.setContentText(header);
         alert.showAndWait();
     }
-
-
-
 
     private void loadEvents() {
         eventsTable.getItems().setAll(eventService.getManagedEvents());
@@ -258,7 +238,6 @@ public class AdminController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
 
-            // No need to refresh here, the dialog will handle it
         } catch (IOException e) {
             e.printStackTrace();
             // handle exception
@@ -287,23 +266,8 @@ public class AdminController {
             refreshEventsTable();
         } catch (IOException e) {
             e.printStackTrace(); // Print stack trace for debugging
-            // Handle possible IO exceptions, such as FXML file not found
         }
     }
-
-
-    private void saveChanges(Event eventData) {
-        // Assuming that you have methods to collect the data from the text fields
-        Map<String, Object> updatedValues = new HashMap<>();
-        // ... populate updatedValues with the new data
-
-        // Assuming your EventService.updateEvent method accepts eventID and a map of details
-        eventService.updateEvent(eventData.getEventID(), updatedValues);
-
-        // Refresh the table to show the updated data
-        eventsTable.refresh();
-    }
-
 
     private void handleDeleteAction(Event eventData) {
         // Implement your delete logic here

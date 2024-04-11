@@ -155,6 +155,7 @@ public class LoginController {
             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("MainMenu.fxml")));
             // Get the stage from the event that triggered this method
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
             // Set the new scene on the current stage
             stage.setScene(new Scene(root));
             // Optional: Set title for new stage

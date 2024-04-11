@@ -7,16 +7,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import service.AccountService;
 import service.DatabaseService;
 import service.EventService;
+import service.TicketService;
 import user.Customer;
 
 import java.io.IOException;
@@ -39,16 +37,55 @@ public class ticketingOfficerController {
     private DatabaseService databaseService;
 
     @FXML
+    private TextField ticketIDfield;
+
+    // Assume that TicketService is initialized somewhere in the controller
+    private TicketService ticketService;
+
+    @FXML
     public void initialize() {
         try {
             DatabaseService databaseService = new DatabaseService("localhost:3306", "ticket_booking", "root", "");
             this.eventService = new EventService(databaseService);
             this.accountService = new AccountService(databaseService);
+            this.ticketService = new TicketService(databaseService);
             loadEvents();
         } catch (SQLException e) {
             e.printStackTrace();
             // Handle exception (show an error dialog or log the error)
         }
+    }
+
+    @FXML
+    private void handleVerifyAction(ActionEvent event) {
+        try {
+            // Retrieve the ticket ID entered by the user
+            int ticketID = Integer.parseInt(ticketIDfield.getText().trim());
+
+            // Call the verifyTicket method from the TicketService
+            boolean isVerified = ticketService.verifyTicket(ticketID);
+
+            // Show the result in an alert dialog
+            showAlert(isVerified ? "Ticket Verification" : "Verification Failed",
+                    isVerified ? "The ticket with ID " + ticketID + " is valid and has been verified." :
+                            "The ticket with ID " + ticketID + " is invalid or has already been used.");
+
+            // Clear the field if verification is successful
+            if (isVerified) {
+                ticketIDfield.setText("");
+            }
+        } catch (NumberFormatException e) {
+            // Show an error message if the input is not a valid integer
+            showAlert("Invalid Input", "Please enter a valid ticket ID.");
+        }
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     private void loadEvents() {

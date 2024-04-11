@@ -811,7 +811,7 @@ public class DatabaseService {
         String query = "SELECT t.ticketID, e.startTime FROM Ticket t " +
                 "INNER JOIN Booking b ON t.bookingID = b.bookingID " +
                 "INNER JOIN Event e ON b.eventID = e.eventID " +
-                "WHERE t.ticketID = ? AND DATE(e.startTime) = CURDATE() AND t.attended = 0";
+                "WHERE t.ticketID = ? AND t.attended = 0";
 
         try (PreparedStatement pstmt = this.connection.prepareStatement(query)) {
             pstmt.setInt(1, ticketID);
