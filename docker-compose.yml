@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ""  # Root password is set but empty
+      MYSQL_DATABASE: ticket_booking
+      MYSQL_USER: appuser       # Dedicated non-root user for the application
+      MYSQL_PASSWORD: ""        # Password for the non-root user
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3306:3306"
+    restart: always
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/01_create_tables.sql
+      - ./sql/insert_data.sql:/docker-entrypoint-initdb.d/02_insert_data.sql
+
+volumes:
+  mysql_data:
