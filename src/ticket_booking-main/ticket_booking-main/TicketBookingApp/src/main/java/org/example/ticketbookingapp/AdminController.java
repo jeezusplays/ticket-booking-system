@@ -164,7 +164,11 @@ public class AdminController {
                         });
                         deleteButton.setOnAction((ActionEvent event) -> {
                             Event eventData = getTableView().getItems().get(getIndex());
-                            handleDeleteAction(eventData);
+                            try {
+                                handleDeleteAction(eventData);
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
                         });
                         exportButton.setOnAction(event -> {
                             Event eventData = getTableView().getItems().get(getIndex());
@@ -226,7 +230,7 @@ public class AdminController {
 
     private void handleEditAction(Event eventData) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("EditEventDialog.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("editEventDialog.fxml"));
             Parent root = loader.load();
             EditEventDialogController dialogController = loader.getController();
             dialogController.setEventToEdit(eventData);
@@ -264,18 +268,34 @@ public class AdminController {
 
             // Refresh the events table after the dialog is closed
             refreshEventsTable();
+            loadAuthorisedEvents();
+            loadTicketingOfficers();
         } catch (IOException e) {
             e.printStackTrace(); // Print stack trace for debugging
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private void handleDeleteAction(Event eventData) {
-        // Implement your delete logic here
-        eventService.cancelEvent(eventData.getEventID());
-        // Now refresh the table to reflect the deletion
-        refreshEventsTable();
+    private void handleDeleteAction(Event eventData) throws SQLException {
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.setTitle("Confirm Cancellation");
+        confirmationAlert.setHeaderText(null);
+        confirmationAlert.setContentText("Are you sure you want to cancel the event: " + eventData.getEventName() + "?");
 
-        System.out.println("Delete Action for: " + eventData.getEventName());
+        Optional<ButtonType> result = confirmationAlert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // User chose OK
+            eventService.cancelEvent(eventData.getEventID());
+            // Now refresh the table to reflect the cancellation
+            refreshEventsTable();
+            loadAuthorisedEvents();
+            loadTicketingOfficers();
+            System.out.println("Cancellation confirmed for: " + eventData.getEventName());
+        } else {
+            // User chose Cancel or closed the dialog
+            System.out.println("Cancellation aborted for: " + eventData.getEventName());
+        }
     }
 
     public void refreshEventsTable() {

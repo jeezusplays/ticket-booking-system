@@ -22,9 +22,11 @@ import user.Customer;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.SQLOutput;
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.time.LocalDateTime;
 
 public class CheckOutPageController {
 
@@ -219,18 +221,44 @@ public class CheckOutPageController {
 
 
     @FXML
-    private void handleBuyTicketAction(ActionEvent event) {
+    private void handleBuyTicketAction(ActionEvent event) throws SQLException {
+        int currentUserId = accountService.getCurrentUserID();
+        double totalPrice = 0;
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime eventStartTime = currentEvent.getStartTime();
+        LocalDateTime sixMonthsAhead = now.plusMonths(6);
+        LocalDateTime twentyFourHoursBefore = eventStartTime.minusHours(24);
+        // Check if the event is too far in the future or too close to the start time
+        if (eventStartTime.isAfter(sixMonthsAhead) || twentyFourHoursBefore.isBefore(now)) {
+            showAlert("Booking Error", "Booking can only be made up to 6 months in advance and no later than 24 hours before the event start time.");
+            return;
+        }
+
         if (carts.isEmpty()) {
-            // Handle the empty cart situation, for example, by showing an alert to the user.
             showAlert("Cannot Checkout", "Your cart is empty. Please add tickets before checking out.");
-            return; // Exit the method early if the cart is empty.
+            return;
+        }
+
+        for (CartItem item : carts) {
+            int ticketOptionID = ticketService.getTicketOptionIDByName(currentEvent.getEventID(), item.category);
+
+            if (ticketOptionID != -1) {
+                totalPrice += bookingService.ReturnTicketPrice(currentEvent.getEventID(), ticketOptionID, item.quantity);
+            } else {
+                throw new IllegalStateException("Ticket Option ID not found for category: " + item.category);
+            }
+        }
+
+        if (totalPrice > bookingService.getCustomerBalance(currentUserId)) {
+            showAlert("Insufficient Balance", "Booking could not be created. Please ensure you have sufficient balance and try again. Your balance is $" + String.format("%.2f", bookingService.getCustomerBalance(currentUserId)));
+            return;
         }
 
         try {
             for (CartItem item : carts) {
                 int ticketOptionID = ticketService.getTicketOptionIDByName(currentEvent.getEventID(), item.category);
                 if (ticketOptionID != -1) {
-                    System.out.println("From controller: Attempting to create booking for Event ID: " + currentEvent.getEventID() + ", Ticket Option ID: " + ticketOptionID + ", ID: " + AccountService.getCurrentUser().getID() + ", Quantity: " + item.quantity);
                     Booking result = bookingService.createBooking(currentEvent.getEventID(), ticketOptionID, AccountService.getCurrentUser().getID(), item.quantity);
                     if (result != null) {
                         System.out.println("Booking created successfully: " + result);
@@ -250,12 +278,13 @@ public class CheckOutPageController {
     }
 
     private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
-        alert.setContentText(content);
         alert.setHeaderText(null);
+        alert.setContentText(content);
         alert.showAndWait();
     }
+
 
 
     private void navigateToThankYouPage(ActionEvent event) {

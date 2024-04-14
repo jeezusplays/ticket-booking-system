@@ -69,12 +69,8 @@ public class Event {
         return this.eventID;
     }
 
-    public SimpleIntegerProperty eventIdProperty() {
-        return eventId;
-    }
-
-    public void setEventId(int eventId) {
-        this.eventId.set(eventId);
+    public void setEventID(int eventID) {
+        this.eventID = eventID;;
     }
     public int getEventManagerID() {
         return this.eventManagerID;
@@ -128,7 +124,8 @@ public class Event {
 
 
     // Setters
-    public void setIsCalled(Boolean isCancelled) { this.isCancelled = isCancelled; }
+    public void setIsCancelled(Boolean isCancelled) { this.isCancelled = isCancelled; }
+    
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }

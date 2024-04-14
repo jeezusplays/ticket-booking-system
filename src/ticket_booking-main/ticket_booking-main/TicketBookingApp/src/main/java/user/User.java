@@ -31,7 +31,4 @@ public abstract class User {
         return this.type;
     }
 
-    public int getId() {
-        return id;
-    }
 }
