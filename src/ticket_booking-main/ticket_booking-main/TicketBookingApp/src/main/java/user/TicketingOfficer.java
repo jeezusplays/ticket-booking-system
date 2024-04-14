@@ -26,6 +26,6 @@ public class TicketingOfficer extends User {
 
     // Overrides the getUserId method to return the ID from the User class
     public int getUserID() {
-        return getId(); // Assumes getId() is the method in the User class.
+        return getID(); // Assumes getId() is the method in the User class.
     }
 }
