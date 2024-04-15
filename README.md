@@ -31,34 +31,32 @@ Ticks manages the booking of tickets for various events, such as music concerts,
 
 ## Getting Started
 ### Prerequisites
-* Ensure you have [Maven](https://maven.apache.org/download.cgi) installed on your machine.
-* MySQL database server running locally.
+* Ensure you have [WAMP](https://www.wampserver.com/en/download-wampserver-64bits/) installed on your machine.
+* Ensure WAMP is  running locally.
 
 ### Database Setup
 To set up the database needed for the ticket booking system, follow these steps:
 
-1. Open phpMyAdmin in your web browser on your local machine.
+1. Open phpMyAdmin in your web browser on your local machine (https://localhost/phpmyadmin).
 
-2. Log in with your MySQL server's username and password.
+2. Log in with your MySQL server's username and password.<br>
+![phpMyAdmin](./imgs/phplogin.png)
 
-3. Once logged in, click on the "Databases" tab in the top navigation bar.
+3. Once logged in, click on the "Databases" tab in the top navigation bar and create a database called `ticket_booking` with `utf8mb4_general_ci` setting.
+![database setup](./imgs/createdatabase.png)
 
-4. In the "Create database" section, enter `ticket-booking-system` as the database name, and choose `utf8mb4_general_ci`. Click "Create".
-
-Run the `DatabaseInitializer.java` class to create the necessary tables in your MySQL database.
-  - In your IDE, run these Maven commands in the terminal in sequence.
-    - Compile the Project: `mvn clean compile`
-    - Initialize the Database: `mvn exec:java -Dexec.mainClass=com.myapp.DatabaseInitializer`
-      - This will execute the SQL script to create the database tables.
+4. Import the sql scripts `create_tables.sql` and `insert_data.sql` in this order<br>
+![database setup](./imgs/script1.png)
 
 ### Installation
 1. Clone the repo
    ```sh
    git clone https://github.com/jeezusplays/ticket-booking-system
     ```
-2. Navigate to the project directory.
+2. Set up database via instruction above
+3. Run TicketBookingApp.jar
     ```sh
-    cd ticket-booking-system
+    java -jar ./out/artifacts/TicketBookingApp_jar/TicketBookingApp.jar
     ```
 <!-- 3. Install NPM packages (if applicable)
    ```sh
